@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="795073c7-3def-4a6f-b821-948236083ba7" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -13,9 +16,9 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="HTML File" />
-        <option value="CSS File" />
         <option value="JavaScript File" />
+        <option value="CSS File" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -33,8 +36,12 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "C:/Users/Jake/PhpstormProjects/personalWebsite/files",
+    "last_opened_file_path": "C:/Users/Jake/PhpstormProjects/final_project_sanders",
     "list.type.of.created.stylesheet": "CSS",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -52,6 +59,10 @@
       <option name="presentableId" value="Default" />
       <updated>1683653589846</updated>
       <workItem from="1683653590960" duration="1913000" />
+      <workItem from="1683748094620" duration="2872000" />
+      <workItem from="1684351165473" duration="2000" />
+      <workItem from="1685485796713" duration="62000" />
+      <workItem from="1685718605892" duration="665000" />
     </task>
     <servers />
   </component>
