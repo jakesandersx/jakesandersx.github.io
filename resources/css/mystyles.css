@@ -1,0 +1,428 @@
+/*************
+MISC
+*************/
+#gallery-paragraph{
+    padding: 0px;
+    font-size: 1.3em;
+    color: black;
+}
+
+.box {
+    width: 300px;
+    border: 1px solid #ccc;
+    padding: 1px;
+    text-decoration: none;
+    color: #333;
+    display: block;
+    margin: 1px; 
+}
+
+.box:hover {
+    background-color: #f0f0f0;
+}
+
+.box img {
+    max-width: 100%;
+}
+
+.box h3 {
+    text-align: center; 
+}
+
+.project-boxes {
+    display: flex;
+    flex-wrap: wrap; 
+    justify-content: space-between; 
+}
+.box {
+    width: 300px;
+    border: 1px solid #ccc;
+    padding: 1px;
+    text-decoration: none;
+    color: #333;
+    display: block;
+    margin: 1px; 
+}
+
+.box:hover {
+    background-color: #f0f0f0;
+}
+
+.box img {
+    max-width: 100%;
+}
+
+.box h3 {
+    text-align: center;
+}
+
+.project-boxes {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.item-skills {
+    height: 20px;
+    background: #002856;
+    color: #ffffff;
+    padding: 5px 10px;
+    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 1.3em;
+    font-weight: 600;
+    text-align: left;
+}
+
+.skills-legend {
+    margin-top: 20px;
+    opacity: 0.8;
+}
+
+.skills-legend:before {
+    width: 100%;
+    height: 3px;
+    position: relative;
+    content: ' ';
+    display: block;
+    margin-bottom: -13px;
+    background: #002856;
+}
+
+.skills-legend div {
+    width: 25%;
+    display: inline-block;
+    font-size: 1em;
+    color: #002856;
+    float: left;
+}
+
+.legend:before {
+    width: 3px;
+    height: 10px;
+    position: relative;
+    content: '';
+    display: block;
+    margin: auto;
+    margin-bottom: 15px;
+    background: #002856;
+}
+
+p{
+    font-size: 2em;
+}
+
+.section-title{
+    margin-bottom: 5px;
+    font-size: 2.2em;
+}
+
+.legend-left.legend:before {
+    margin-left: 0;
+}
+
+.legend-right.legend:before {
+    margin-right: 0;
+}
+
+.legend-left:nth-child(1) span {
+    margin-left: -185px;
+}
+
+.legend-left:nth-child(2) span {
+    margin-left: -230px;
+}
+
+.legend-right:nth-child(3) span {
+    margin-right: -20px;
+}
+
+.legend-right {
+    text-align: right;
+}
+li{
+    font-size: 2em;
+    text-align: center;
+}
+.no-bullets{
+    list-style: none;
+    text-align: center;
+    padding-left: 0;
+}
+
+.bigger-font {
+    color: #002856;
+    font-size: 2.5em;
+}
+.project-pic {
+    width: 300px;
+    height: 200px;
+}
+
+.skills-legend {
+    margin-top: 20px;
+    opacity: 1;
+}
+
+.skills-legend:before {
+    width: 100%;
+    height: 3px;
+    position: relative;
+    content: ' ';
+    display: block;
+    margin-bottom: -13px;
+    background: #002856;
+}
+
+.skills-legend div {
+    width: 25%;
+    display: inline-block;
+    font-size: 1em;
+    color: #002856;
+}
+
+/**********************************
+            HEADER
+ ***********************************/
+
+header {
+    text-align: center;
+    background-color: white;
+    padding: 40px 0 10px;
+}
+
+.header-nav ul {
+    list-style: none;
+    padding: 0;
+}
+.spread {
+    display: inline;
+    margin: 35px;
+    font-size: 1.7vw;
+    font-weight: normal;
+}
+
+.spread-bold {
+    display: inline;
+    margin: 35px;
+    font-size: 1.7vw;
+    font-weight: bold;
+}
+
+.close {
+    display: inline;
+    margin: -21px;
+    font-size: 1.6vw;
+    padding-left: 35px;
+}
+.close a {
+}
+
+.header-nav a {
+    text-decoration: underline;
+    color: #002856;
+    transition: text-decoration 0.3s, color 0.3s;
+}
+
+.header-nav a.active {
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.header-nav a:hover {
+    color: #007853;
+    text-decoration: none;
+}
+
+#main-title {
+    text-align: left; 
+    margin: 20px 0; 
+    max-width: none; 
+}
+
+.main-title {
+    font-size: 3em;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #ffffff;
+    margin: 0;
+    padding: 0;
+}
+
+/****** CONTENT ************/
+.measure {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.image-wrapper {
+    float: right;
+    margin: 0 0 20px 20px; 
+}
+
+.image-wrapper img {
+    border-radius: 1em;
+    max-width: 250px;
+}
+
+.post-content::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.post-content a {
+    color: #002856;
+    text-decoration: none; 
+    font-weight: bold;
+  }
+  
+  .post-content a:hover {
+    text-decoration: underline;
+  }
+  
+
+.measure .post-content p {
+    font-size: 1.2em;
+    color: #333;
+    line-height: 1.5;  
+}
+
+.main-paragraph-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin: 0 auto; 
+}
+
+.main-paragraph {
+    flex: 1;
+    font-size: 1.8em; 
+    text-align: left; 
+    margin: 0 100px; 
+    max-width: 350px;
+}
+
+.major {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: left;
+    margin: 0 100px; 
+}
+
+.minor {
+    font-size: 15px;
+    text-align: left;
+    margin: 0 100px; 
+}
+
+/***********************
+BLOG
+ *****************/
+
+.blog-hub {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.blog-entry {
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: #ffffff;
+}
+
+.blog-date {
+    font-size: 16px;
+    color: #555;
+    margin: 0;
+}
+
+.blog-title {
+    font-size: 22px;
+    margin: 10px 0;
+}
+
+.blog-title a {
+    font-size: 1.2em;
+    text-decoration: none;
+    color: #002856;
+}
+
+.blog-title a:hover {
+    color: #007853; 
+}
+
+.blog-description {
+    font-size: 16px;
+    margin: 0;
+}
+.blog-divider {
+    margin: 40px 0;
+    border: 1px solid #ccc;
+}
+
+.blog-hub h1 {
+    margin-left: 10px;
+}
+
+#projects-overview{
+    max-width: 400px;
+    margin: 0 auto;
+    text-align: center;
+}
+.small-list-item {
+    font-size: 18px;
+    text-align: left;
+    line-height: 1.4; 
+}
+
+
+.blog-image {
+    display: block;
+    margin: 0 auto; 
+    max-width: 100%; 
+    height: 500px; 
+    border: 1px solid black;
+  }
+
+.personal-image {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%; 
+    height: 200px; 
+}
+
+/**********************
+FOOTER
+*******************/
+
+footer {
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: white;
+    text-align: center; /* Center the text within the footer */
+}
+
+.footer-list {
+    list-style: none; /* Remove default list styles */
+    padding: 0;
+    display: flex;
+    justify-content: center; /* Center the list items horizontally */
+    align-items: center;
+}
+
+footer a {
+    color: #002856;
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+    color: #002856;
+}
