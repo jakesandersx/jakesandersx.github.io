@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Baseball Tracker</title>
+    <link rel="shortcut icon" type="image/x-icon" href="../../resources/images/icon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="../resources/stylesheet.min.css">
+    <link rel="stylesheet" href="../resources/css/mystyles.css">
+    <link rel="stylesheet" href="../resources/css/blogs.css">
+    <script src="../../resources/ga.js" async></script>
+    <meta name="google-site-verification" content="a6Dkj3tZ7SEai-QbfbOI0M0Jb65Lp18nbY1Hl3LwOro">
+</head>
+<body>
+<header>
+    <div class="header-nav">
+        <ul>
+            <li class="spread"><a href="../index.html">Home</a></li>
+            <li class="spread"><a href="../pages/blog.html">Blog</a></li>
+            <li class="spread"><a href="../pages/about.html">About</a></li>
+            <li class="spread"><a href="../pages/gallery.html">Gallery</a></li>
+            <li class="close"><a href="https://github.com/jakesandersx"><i class="fa fa-github fa-fw"></i></a></li>
+        </ul>
+    </div>
+</header>
+<div class="container">
+    <h1>A Baseball Point Tracker</h1>
+    <div class="blog-date">October 28, 2023</div>
+    <p>Every innovation starts with an idea. For me, it was the hiring of a new pitching coach. When our current pitching coach was newly hired, I was skeptical at first. However, as time went on, I began to enjoy him more due to our shared love of statistics and analytics. He opened up a can of worms for me that I had never imagined before. He envisioned an app that would not only record every pitch but also evaluate each hitter's performance instantly. Thus, the journey to create a personal offense tracker began.</p>
+    <img class="blog-image" src="../resources/images/tracker.png" />
+    <h2>Functionality</h2>
+    <p>One of the most critical features of the app is its ability to collect real-time data during a baseball game. Inside the app, there are 4 tabs: Home, Players, Score, and Settings.</p>
+    <ul>
+        <li class="small-list-item"><strong>Players:</strong> This tab allows for the creating, editing, and deleting of players in real time. You can add a pinch hitter in the middle of the game, edit player information, or remove players as needed.</li>
+        <li class="small-list-item"><strong>Scores:</strong> The Scores tab showcases a large table that tracks every player's statistics. It populates the table with relevant data as the game progresses, calculating each player's total score for the game.</li>
+        <li class="small-list-item"><strong>Settings:</strong> The Settings tab allows you to change the save directory of the app and clear log lists or all current players at once.</li>
+        <li class="small-list-item"><strong>Home:</strong> This is the core functionality of the app, allowing you to select a player, record an input, and save the game state in real-time. It automatically updates the player's game score within the "Score" tab.</li>
+    </ul>
+
+    <h2>Player Performance Evaluation</h2>
+    <p>The beauty of the evaluation is its simplicity. There are no regards for exit velocity or launch angle, but rather just good quality baseball. The algorithm for scoring is simple addition for good actions and simple subtraction for bad actions. While there's room for making the algorithm more advanced in the future, the current system fits our needs for now.</p>
+
+    <img class="blog-image" src="../resources/images/tracker_showcase.gif" />
+    <p>After every input, the result is posted to the console as well:</p>
+    <img src="../resources/images/console.png" />
+
+    <h2>Data Export Options</h2>
+    <p>To ensure the collected data is accessible and useful, I incorporated export options to save data in multiple formats. Within the "Scores" tab are 3 buttons - Create CSV, Create PDF, and Create TXT. These options create files showcasing the data in the specified formats, making it easy to access and analyze the results. For the most part, I create a PDF after every game, as well as save the data to a CSV and then import the data into a MySQL database for further data analysis.</p>
+    <br />
+    <img class="blog-image" src="../resources/images/scores.png" />
+
+    <h2>The Impact on Baseball</h2>
+    <p>The impact this app has had on my team has been more than beneficial. It allows me and my teammates to understand that baseball is more than just a simple game. At a high level, it is more similar to a chess match - Every piece moves differently, and you have to use your pieces to your advantage to take down your opponent. By incorporating this app into our offensive philosophy, we can understand as hitters how we fit into the puzzle and how we can best take advantage of our strengths.</p>
+</div>
+<footer>
+    <ul class="footer-list">
+        <li><a href="../index.html">Home</a></li>
+        <li><a href="../pages/privacy.html">Privacy</a></li>
+        <li><a href="https://twitter.com/jakesandersx"><i class="fa fa-twitter fa-fw"></i></a></li>
+        <li><a href="https://www.linkedin.com/in/jake-sanders-079343293/"><i class="fa fa-linkedin fa-fw"></i></a></li>
+        <li><a href="mailto:jakesandersx@hotmail.com"><i class="fa fa-envelope fa-fw"></i></a></li>
+    </ul>
+</footer>
+</body>
+</html>

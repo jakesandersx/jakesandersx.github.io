@@ -19,6 +19,7 @@ MISC
 
 .box:hover {
     background-color: #f0f0f0;
+    text-decoration: none;
 }
 
 .box img {
@@ -34,33 +35,8 @@ MISC
     flex-wrap: wrap; 
     justify-content: space-between; 
 }
-.box {
-    width: 300px;
-    border: 1px solid #ccc;
-    padding: 1px;
-    text-decoration: none;
-    color: #333;
-    display: block;
-    margin: 1px; 
-}
 
-.box:hover {
-    background-color: #f0f0f0;
-}
 
-.box img {
-    max-width: 100%;
-}
-
-.box h3 {
-    text-align: center;
-}
-
-.project-boxes {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-}
 .item-skills {
     height: 20px;
     background: #002856;
@@ -215,8 +191,6 @@ header {
     margin: -21px;
     font-size: 1.6vw;
     padding-left: 35px;
-}
-.close a {
 }
 
 .header-nav a {
@@ -390,6 +364,23 @@ BLOG
     border: 1px solid black;
   }
 
+.adv-dadv-even-image {
+    display: block;
+    margin: 0 auto; 
+    max-width: 100%; 
+    height: 175px; 
+    border: 1px solid black;
+}
+
+.filtered-image {
+    text-align: center;
+    margin: 0 auto;
+    max-width: 100%;
+    height: 450px;
+    border: 1px solid black;
+}
+
+
 .personal-image {
     display: block;
     margin: 0 auto;
@@ -425,4 +416,10 @@ footer a {
 footer a:hover {
     text-decoration: underline;
     color: #002856;
+}
+
+.hotsoft-list {
+    font-size: 18px;
+    text-align: left;
+    margin-bottom: 20px;
 }
