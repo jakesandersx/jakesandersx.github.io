@@ -1,60 +1,109 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Jake Sanders</title>
-    <link href="css/mystyles.css" type="text/css" rel="stylesheet" />
-    <script src="js/myscripts.js"></script>
-</head>
+<html lang="en">
+  <head>
+    <link rel="shortcut icon" type="image/x-icon" href="../resources/images/icon.png">
+    <title>Home - Jake Sanders</title>
+    <link rel="stylesheet" href="resources/css/mystyles.css">
+  </head>
+  <body>
+    <header>
+      <div class="header-left">
+        <h2><a href="index.html">JAKE SANDERS</a></h2>
+        <h3><a href="index.html">Student</a></h3>
+      </div>
+      <div class="header-right">
+        <a href="blog.html">BLOG</a>
+        <a href="about.html">ABOUT</a>
+        <a href="gallery.html">GALLERY</a>
+      </div>
+    </header>
+    <div id="content">
+      <div class="content-block center">
+        <h1 id="main-title">Hey, I'm Jake!</h1>
+        <h2 id="sub-title">I study Computer Science and Web & Mobile App Development</h2>
+        <div class="main-paragraph-container">
+          <div class="paragraph-box">
+            <p class="main-paragraph-head"><b>Nerdy Interests</b></p>
+            <p class="main-paragraph"><b>Computer Science: </b>software development, data science, machine learning.</p>
+            <p class="main-paragraph"><b>Statistics: </b>exploiting baseball data, visualizations, regression analysis.</p>
+            <p class="main-paragraph"><b>Aviation: </b>air force and naval aviation, g-force effects, piloting.</p>
+          </div>
+          <div class="paragraph-box">
+            <p class="main-paragraph-head"><b>My <i>less</i> nerdy interests</b></p>
+            <p class="main-paragraph"><b>Baseball: </b>guardians and reds. current college baseball player.</p>
+            <p class="main-paragraph"><b>Music: </b>oasis, alvvays, darius rucker, radiohead, 3 doors down.</p>
+            <p class="main-paragraph"><b>Misc: </b>video games (COD, DCS World), video editing, photography, wordle, lasagna.</p>
+        </div>
+      </div>
+      <div class="content-block center">
+        <div class="main-paragraph-container">
+          <div class="paragraph-box-blog">
+            <p class="main-paragraph-head"><b>Blogs</b></p>
+            <p class="main-paragraph-blog">I post some of my projects and recent adventures I get into on here. Here are some of my favorites, but you can find the rest <a class="link" href="blog.html">here</a>.</p>
 
-<body>
-<header>
-    <h1>Jake Sanders</h1>
-    <p>Computer Science / Web and Mobile App Development Major at Mount St. Joseph University</p>
-    <h3>Socials</h3>
-    <nav>
-        <ul>
-            <li><a class="header_link" href="https://github.com/jakesandersx">GitHub</a></li>
-            <li><a class="header_link" href="https://www.linkedin.com/in/jake-sanders-70249a262/">LinkedIn</a></li>
-            <li><a class="header_link" href="https://app.joinhandshake.com/stu/users/44273935">Handshake</a></li>
-            <li><a class="header_link" href="https://twitter.com/jakesandersx">Twitter</a></li>
-            <li><a class="header_link" href="https://instagram.com/jakesandersx">Instagram</a></li>
-        </ul>
-    </nav>
-</header>
-<main>
-    <section>
-        <h2>About Me</h2>
-        <p>Hi, my name is Jake Sanders. I am a Computer Science + Web and Mobile App Development double major at Mount St. Joseph University, with a minor in mathematics. I am passionate about creating engaging and user-friendly web applications that solve real-world problems.</p>
-    </section>
-    <section id="skills">
-        <h2>Skills</h2>
-        <ul>
-            <li>HTML5</li>
-            <li>CSS3</li>
-            <li>JavaScript</li>
-            <li>Python</li>
-            <li>Node.js</li>
-            <li>SQL / MySQL</li>
-            <li>Windows / Linux Operating Systems</li>
-        </ul>
-    </section>
-    <section id="education">
-        <h2>Education</h2>
-        <ul>
-            <li>Mount St. Joseph University - Computer Science / Web and Mobile App Development Major (Expected Graduation: May 2025)</li>
-            <li>Mount St. Joseph University - Mathematics Minor</li>
-            <li>Edison State Community College - College Credit Plus Courses for Gen-ED</li>
-            <li><a href="files/Transcript_May2.pdf">* Transcript Updated as of May 2023</a></li>
-        </ul>
-    </section>
-    <section id="experience">
-        <h2>Experience</h2>
-        <ul>
-            <li>Web Development Intern - XYZ Company (Summer 2022)</li>
-            <li>Software Development Intern - ABC Corporation (Summer 2021)</li>
-        </ul>
-    </section>
-</main>
-</body>
+
+            <div class="blog-box">
+              <a href="umpire.html" class="blog-link">
+                <div class="blog-details">
+                  <div class="title-date">
+                    <h4 class="blog-title">Umpire Grader</h4>
+                    <div>
+                      <span class="blog-date">October 5, 2023</span>
+                      <span class="blog-type">Project</span>
+                    </div>
+                  </div>
+                  <p class="blog-summary">Python script that will retrieve MLB pitch data, and grade the umpire based on their performance.</p>
+                </div>
+                <div class="blog-picture">
+                  <img src="resources/images/hoberg.png" alt="Pat Hoberg">
+                </div>
+              </a>
+            </div>
+
+            <div class="blog-box">
+              <a href="hotsoft.html" class="blog-link">
+                <div class="blog-details">
+                  <div class="title-date">
+                    <h4 class="blog-title">Hot/Soft Shiny App</h4>
+                    <div>
+                      <span class="blog-date">February 22, 2024</span>
+                      <span class="blog-type">Project</span>
+                    </div>
+                  </div>
+                  <p class="blog-summary">A Shiny App that allows a baseball team to track opposing pitcher data in real-time.</p>
+                </div>
+                <div class="blog-picture">
+                  <img src="resources/images/FILTERED.png" alt="Shiny App Data">
+                </div>
+              </a>
+            </div>
+
+            <div class="blog-box">
+              <a href="2024.html" class="blog-link">
+                <div class="blog-details">
+                  <div class="title-date">
+                    <h4 class="blog-title">2023 Recap</h4>
+                    <div>
+                      <span class="blog-date">December 6, 2023</span>
+                      <span class="blog-type">Blog</span>
+                    </div>
+                  </div>
+                  <p class="blog-summary">A look back at 2023, and a look into the future of 2024.</p>
+                </div>
+                <div class="blog-picture">
+                  <img src="resources/images/2023.png" alt="2023!">
+                </div>
+              </a>
+            </div>
+
+
+
+            </div>
+          </div>
+        </div>
+      </div>
+    <footer>
+      <br>
+    </footer>
+  </body>
 </html>
