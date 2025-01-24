@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>MSJ Baseball Analytics</title>
+  <link rel="stylesheet" href="../css/blogs.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/atom-one-dark.min.css">
+</head>
+<p id="arrow"><a href="../projects.html"><</a></p>
+<body>
+<div class="code-container">
+  <h1>MSJ Baseball Dashboard Code Snippets</h1>
+  <div class="subtitle">2024</div>
+  <br>
+  <div class="code-subtitle"><a href="../posts/dashboard.html">Writeup</a></div>
+  <br>
+  <div class="code-box">
+    <h3 class="code-title">UI</h3>
+    <pre>
+      <code>
+ui <- fluidPage(
+  titlePanel("MSJ 2025 Pitcher Logs Analysis - DEMO"),
+
+  sidebarLayout(
+    sidebarPanel(
+      selectInput("pitcher", "Select Pitcher:", choices = NULL, selected = NULL)
+    ),
+
+    mainPanel(
+      tabsetPanel(
+        tabPanel("Player Report", uiOutput("playerReport")),
+        tabPanel(
+          "Compare Statistics",
+          selectInput("stat", "Select Statistic:", choices = c(
+            "Strike%", "FPS%", "4PV%", "PR", "CScore", "ER", "R", "SO",
+            "BB%", "K%", "PPI", "PBF", "K/BB"
+          )),
+          plotlyOutput("statPlot")
+        )
+      )
+    )
+  )
+)
+      </code>
+    </pre>
+  </div>
+  <br>
+  <br>
+  <div class="code-box">
+    <h3 class="code-title">Data Cleaning</h3>
+    <pre>
+      <code>
+pitcher_data <- reactive({
+
+    data <- load_data()
+
+    data <- data %>%
+      mutate(across(c(IP, ER, R, SO, `Strike%`, `FPS%`, `4PV%`, Score, PR, BB, BF, Ks, PC, Outs), as.numeric)) %>%
+      filter(!is.na(`Strike%`)) %>%
+      mutate(
+        `BB%` = BB / BF,
+        `K%` = (Ks + SO) / BF,
+        `PPI` = PC / (Outs / 3),
+        `PBF` = PC / BF,
+        `K/BB` = (Ks + SO) / BB,
+        `ERA` = (ER / (Outs / 3)) * 9,
+        PR = PR,
+        CScore = Score
+      )
+
+    updateSelectInput(session, "pitcher", choices = unique(data$Name))
+
+    return(data)
+    print(data)
+  })
+      </code>
+    </pre>
+  </div>
+  <br>
+  <br>
+  <div class="code-box">
+    <h3 class="code-title">Example of UI Box</h3>
+    <pre>
+      <code>
+tagList(
+      h2(paste(input$pitcher, "Report"), align = "center"),
+
+      fluidRow(
+        column(4, div(style = paste("background-color:", get_color(player_percentiles$FPS_percentile),
+                                    "; border: 1px solid black; padding: 10px;"),
+                      strong("FPS%: "), strong(paste0(round(player_data$`FPS%` * 100), "%")))),
+        column(4, div(style = paste("background-color:", get_color(player_percentiles$`4PV%_percentile`),
+                                    "; border: 1px solid black; padding: 10px;"),
+                      strong("4PV%: "), strong(paste0(round(player_data$`4PV%` * 100), "%")))),
+        column(4, div(style = paste("background-color:", get_color(player_percentiles$Strike_percentile),
+                                    "; border: 1px solid black; padding: 10px;"),
+                      strong("Strike%: "), strong(paste0(round(player_data$`Strike%` * 100), "%"))))
+      ),
+      </code>
+    </pre>
+  </div>
+
+</div>
+<footer>
+  <br />
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</body>
+</html>

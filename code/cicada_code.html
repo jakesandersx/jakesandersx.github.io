@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Monkey Bot</title>
+  <link rel="stylesheet" href="../css/blogs.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/atom-one-dark.min.css">
+</head>
+<p id="arrow"><a href="../projects.html"><</a></p>
+<body>
+<div class="code-container">
+  <h1>Cicada Safari AI Code Snippets</h1>
+  <div class="subtitle">April 14, 2023</div>
+  <br>
+  <div class="code-subtitle"><a href="../posts/cicada.html">Writeup</a></div>
+  <br>
+  <div class="code-box">
+    <h3 class="code-title">Automatically Label Images</h3>
+    <pre>
+      <code>
+import os
+from ultralytics import YOLO
+from tqdm import tqdm
+import shutil
+
+image_dir = "./raw images"
+output_dir = "./labeled images/images"
+annotations_dir = "./labeled images/labels"
+
+# create dir
+os.makedirs(output_dir, exist_ok=True)
+os.makedirs(annotations_dir, exist_ok=True)
+
+
+model = YOLO(model here)
+
+# all images
+images_to_do = [image_file for image_file in os.listdir(image_dir)]
+
+
+for image_file in tqdm(images_to_do, desc="Annotating images"):
+    image_path = os.path.join(image_dir, image_file)
+    annotations = []
+
+    results = model.predict(source=image_path, save=False, conf=0.8, device='cpu', verbose=False)
+
+    for result in results:
+        for box in result.boxes:
+            cls = int(box.cls)
+            xywhn = box.xywhn[0].tolist()
+
+            if len(xywhn) == 4:
+                x_center, y_center, width, height = xywhn
+                annotations.append(f"{cls} {x_center} {y_center} {width} {height}")
+            else:
+                print(f"Invalid bounding box for {image_file}: {xywhn}")
+
+    if annotations:
+        shutil.copy(image_path, os.path.join(output_dir, image_file))
+
+        output_file = os.path.join(annotations_dir, os.path.splitext(image_file)[0] + '.txt')
+        with open(output_file, 'w') as f:
+            f.write('\n'.join(annotations))
+
+        print(f"{image_file} labeled and saved")
+    else:
+        print(f"{image_file} did not achieve confidence")
+
+      </code>
+    </pre>
+  </div>
+  <br>
+  <br>
+  <div class="code-box">
+    <h3 class="code-title">Splitting Images into Subfolders</h3>
+    <pre>
+      <code>
+import os
+import random
+import shutil
+from PIL import Image
+from tqdm import tqdm
+
+
+labeled_images_dir = "./labeled images"
+images_dir = os.path.join(labeled_images_dir, "images")
+labels_dir = os.path.join(labeled_images_dir, "labels")
+
+output_base_dir = "new image path"
+train_images_dir = os.path.join(output_base_dir, "train/images")
+train_labels_dir = os.path.join(output_base_dir, "train/labels")
+valid_images_dir = os.path.join(output_base_dir, "valid/images")
+valid_labels_dir = os.path.join(output_base_dir, "valid/labels")
+test_images_dir = os.path.join(output_base_dir, "test/images")
+test_labels_dir = os.path.join(output_base_dir, "test/labels")
+
+
+os.makedirs(train_images_dir, exist_ok=True)
+os.makedirs(train_labels_dir, exist_ok=True)
+os.makedirs(valid_images_dir, exist_ok=True)
+os.makedirs(valid_labels_dir, exist_ok=True)
+os.makedirs(test_images_dir, exist_ok=True)
+os.makedirs(test_labels_dir, exist_ok=True)
+
+image_files = [f for f in os.listdir(images_dir)]
+
+random.seed(42)
+random.shuffle(image_files)
+
+n_total = len(image_files)
+n_train = int(n_total * 0.85)
+n_valid = int(n_total * 0.10)
+
+train_files = image_files[:n_train]
+valid_files = image_files[n_train:n_train + n_valid]
+test_files = image_files[n_train + n_valid:]
+
+
+def process_files(image_list, dest_images_dir, dest_labels_dir):
+    for image_file in tqdm(image_list, desc=f"Processing {os.path.basename(dest_images_dir)}"):
+        src_image_path = os.path.join(images_dir, image_file)
+        src_label_path = os.path.join(labels_dir, os.path.splitext(image_file)[0] + '.txt')
+
+        dest_image_path = os.path.join(dest_images_dir, image_file)
+        dest_label_path = os.path.join(dest_labels_dir, os.path.splitext(image_file)[0] + '.txt')
+
+        with Image.open(src_image_path) as img:
+            img = img.resize((400, 400))
+            img.save(dest_image_path)
+
+        if os.path.exists(src_label_path):
+            shutil.copy(src_label_path, dest_label_path)
+        else:
+            print(f"Warning: Label file missing for {image_file}")
+
+
+process_files(train_files, train_images_dir, train_labels_dir)
+process_files(valid_files, valid_images_dir, valid_labels_dir)
+process_files(test_files, test_images_dir, test_labels_dir)
+      </code>
+    </pre>
+  </div>
+  <br>
+  <br>
+
+</div>
+<footer>
+  <br />
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</body>
+</html>

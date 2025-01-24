@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Monkey Bot</title>
+  <link rel="stylesheet" href="../css/blogs.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/atom-one-dark.min.css">
+</head>
+<p id="arrow"><a href="../projects.html"><</a></p>
+<body>
+<div class="code-container">
+  <h1>Monkey Bot Code Snippets</h1>
+  <div class="subtitle">April 14, 2023</div>
+  <br>
+  <div class="code-subtitle"><a href="../posts/bot.html">Writeup</a></div>
+  <br>
+    <div class="code-box">
+        <h3 class="code-title">Link</h3>
+        <pre>
+      <code>
+@client.command()
+async def link(ctx, clash_account_tag):
+    try:
+        player_data = open('player_data.txt', 'a')
+    except:
+        player_data = open('player_data.txt', 'w')
+    player_data_read = open('player_data.txt', 'r').read().split("\n")
+    if len(player_data_read) >= 1:
+        all_discord_saved = []
+        for pdr in player_data_read:
+            if len(pdr.split('; ')) >= 1:
+                all_discord_saved.append(pdr.split('; ')[0])
+        if str(ctx.author.id) not in all_discord_saved:
+            player_data.write(f"{str(ctx.author.id)}; {str(clash_account_tag)}\n")
+            await ctx.send(f"{str(clash_account_tag)} Clash Account linked to <@{str(ctx.author.id)}>")
+        else:
+            await ctx.send(f'{str(ctx.author.display_name)} is already linked to {str(clash_account_tag)}')
+      </code>
+    </pre>
+    </div>
+    <br>
+    <br>
+  <div class="code-box">
+      <h3 class="code-title">Ping</h3>
+    <pre>
+      <code>
+@client.command(pass_context=True)
+@commands.has_role("Clan Leader")
+async def ping(ctx):
+  try:
+      player_data = open('player_data.txt', 'r')
+  except:
+      print("player_data.txt not found")
+      player_data = False
+  if player_data != False:
+      player_data = player_data.read()
+      players = [player.split('; ') for player in player_data.split('\n')]
+      clean_players = [player for player in players if len(player) >= 2]
+      all_clash_accounts = []
+      all_discord_accounts = []
+      for single_player in clean_players:
+          all_clash_accounts.append(single_player[1])
+          all_discord_accounts.append(single_player[0])
+
+      headers = {"Accept":"application/json", "authorization":clash_api_token}
+      r=requests.get(f"https://api.clashroyale.com/v1/clans/%23{CLANTAGHERE}/currentriverrace", headers=headers)
+
+      clean_data = json.loads(r.content)
+      own_clan = clean_data['clan']
+      all_participants = own_clan['participants']
+      all_player_tags = [player_tag['tag'] for player_tag in all_participants]
+      all_player_names = [player_tag['name'] for player_tag in all_participants]
+
+      all_attacks_left = []
+      for single_clash in all_clash_accounts:
+          try:
+              player_index = all_player_tags.index(single_clash)
+          except:
+              await ctx.send(f"{str(single_clash)} could not be found in clan")
+              continue
+
+          decks_used = all_participants[player_index]['decksUsedToday']
+          if (4 - int(decks_used)) != 0:
+              player_discord = all_discord_accounts[all_clash_accounts.index(single_clash)]
+              all_attacks_left.append(f"<@{str(player_discord)}>, you have {int(4 - int(decks_used))} attacks left")
+      await ctx.send("\n".join(all_attacks_left))
+      print("ping command finished")
+      </code>
+    </pre>
+  </div>
+    <br>
+    <br>
+
+</div>
+<footer>
+  <br />
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</body>
+</html>

@@ -2,27 +2,18 @@
 <html lang="en">
 <head>
     <title>Grading Umpires</title>
-    <link rel="shortcut icon" type="image/x-icon" href="resources/images/icon.png">
-    <link rel="stylesheet" href="resources/stylesheet.min.css">
-    <link rel="stylesheet" href="resources/css/blogs.css">
-    <link rel="stylesheet" href="resources/css/mystyles.css">
-    <script src="../resources/ga.js" async></script>
+    <link rel="stylesheet" href="../css/blogs.css">
 </head>
 <body>
 <header>
-    <div class="header-left">
-        <h2><a href="index.html">JAKE SANDERS</a></h2>
-        <h3><a href="index.html">Student</a></h3>
-    </div>
-    <div class="header-right">
-        <a href="blog.html">BLOG</a>
-        <a href="about.html">ABOUT</a>
-        <a href="gallery.html">GALLERY</a>
+    <div>
+        <h2><a href="../index.html">Home</a></h2>
     </div>
 </header>
 <div class="container">
     <h1>Grading MLB Umpires</h1>
-    <div class="blog-date">October 5, 2023</div>
+    <div class="subtitle">October 5, 2023</div>
+    <br>
     <p>The role of an umpire cannot be understated. I would argue that an umpire has more control over the outcome of a game than any other referee / official in sports. Sure, you have line judges for sports like volleyball and tennis, but their jobs are constant and repetitive: if the ball touches the line, it is in. If it does not, the ball is out. The role of an umpire is trivial in a sense because their "lines" for balls and strikes are imaginary, and they need to paint the picture in their own head. Sure, the width of the plate stays the same and (most) batters are similar enough in height to where the height of the strike zone is not hugely changed, but they still need to be able to see the pitch and its movement, where it crosses over their invisible box, and make a decision, all within a split-second. And that is where things can get hairy.</p>
     <br>
     <h2>Gathering the Data</h2>
@@ -37,14 +28,14 @@
         <li>Pitches that are swung at in any regard</li>
         <li>Pitches that are not in the "shadow zone"</li>
     </ul>
-    For obvious reasons, we need to remove pitches that are swung at. If a batter swings at the pitch, the umpire doesn't need to make a decision on the pitch. This is easy enough to understand, but the shadow zone is where things get tricky. Out of all the pitches in an average MLB game, the umpire needs to make a (reasonable) decision on only about 50% of them. The other 50% of pitches are essentially no brainers: pitches that are either swung at, or obvious enough to a casual fan to make a call. A swing on a pitch is a strike 100% of the time, a pitch in the dirt is a ball 100% of the time. If a pitch is over the middle of the plate at the height of the batter's belly button, it will be a strike every time. These pitches are not in what is called the "shadow zone" of the strike zone, which is an area about a two-baseball-wide-area that spans the edge of the strike zone. This is where they make the big bucks. </p>
+    <p>For obvious reasons, we need to remove pitches that are swung at. If a batter swings at the pitch, the umpire doesn't need to make a decision on the pitch. This is easy enough to understand, but the shadow zone is where things get tricky. Out of all the pitches in an average MLB game, the umpire needs to make a (reasonable) decision on only about 50% of them. The other 50% of pitches are essentially no brainers: pitches that are either swung at, or obvious enough to a casual fan to make a call. A swing on a pitch is a strike 100% of the time, a pitch in the dirt is a ball 100% of the time. If a pitch is over the middle of the plate at the height of the batter's belly button, it will be a strike every time. These pitches are not in what is called the "shadow zone" of the strike zone, which is an area about a two-baseball-wide-area that spans the edge of the strike zone. This is where they make the big bucks. </p>
 
     <br>
     <h2>Analyzing</h2>
     <p>Now that we have all of our unnecessary data removed, we can start to take a look at the data. I gave the umpires a little bit of wiggle-room and gave the following rule: "If 3/4 of the ball or more is inside the strike zone, it should be called a strike. If 1/4 of the ball or less is inside the strike zone, it should be called a ball." I came to terms with these rules as they seem realistic for real-world simulations. By definition, if any part of the ball touches the strike zone, it should be called a strike, but I do not that that is realistic. If 99.9% of the ball is off the plate but that slim 0.1% of the ball is touching the zone, should it be called a strike? That is for you to decide. </p>
     <br>
     <p>Inspired by UmpScorecards, I additionally used matplotlib and created visuals as seen below for every game. The report card, as I call it, shows everything I've mentioned before but in an easy-to-understand format. It shows the pitches that the umpire missed, their accuracy percentage, and the game they umpired, shown by the teams that played on whichever date it was.</p>
-    <img class="filtered-image" src="resources/images/2023-04-04_SD_AZ.png" />
+    <img class="filtered-image" src="../more/images/2023-04-04_SD_AZ.png" />
 
     <br>
     <h2>Deep Data</h2>
