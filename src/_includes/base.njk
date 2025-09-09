@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title or "Jake [Sanders]" }}</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="icon" type="image/x-icon" href="/more/images/icon.png">
+
+    <!-- ICO for browsers that auto-request /favicon.ico -->
+    <link rel="icon" href="{{ '/favicon.ico' | url }}">
+
+    <!-- PNG for your custom icon -->
+    <link rel="icon" type="image/png" href="{{ '/more/images/icon.png' | url }}">
+</head>
+<body>
+<header>
+  <br><br><br>
+</header>
+
+<div class="container">
+  {{ content | safe }}
+</div>
+
+<footer>
+  <br><br>
+  <h5><a href="https://github.com/jakesandersx">Github</a></h5>
+  <h5><a href="https://linkedin.com/in/jakesandersx">LinkedIn</a></h5>
+  <h5><a href="https://twitter.com/jakesandersx">Twitter</a></h5>
+  <h5><a href="/more/Resume.pdf">Resume</a></h5>
+</footer>
+</body>
+</html>

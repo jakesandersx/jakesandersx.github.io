@@ -11,6 +11,26 @@
     padding-left: 25%;
 }
 
+/* spacing for tidbits index list */
+.tidbits-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.tidbits-list li {
+    margin: 1.5rem 0;   /* vertical spacing between entries */
+    font-size: 1.1rem;
+}
+
+/* spacing for tidbit post paragraphs */
+.tidbit .content p {
+    margin-bottom: 1rem; /* adds space below each paragraph */
+    line-height: 1.6;    /* makes text easier to read */
+}
+
+
+
 .blog-container {
     width: 500px;
     margin: 0 auto;
