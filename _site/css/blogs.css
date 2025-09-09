@@ -1,0 +1,132 @@
+.container {
+    width: 30%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.code-container {
+    width: 50%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.section {
+    width: 48%;
+    padding: 10px;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: white;
+}
+
+.title {
+    display: flex;
+    justify-content: space-between;
+}
+
+#arrow {
+    padding-left: 10px;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+p.small {
+    font-size: 0.75em;
+    font-style: italic;
+}
+
+p.center {
+    font-size: 1.1em;
+    text-align: center;
+    font-weight: bold;
+}
+
+h2 {
+    text-align: center;
+    font-size: 1.5em;
+}
+
+.subtitle {
+    font-size: 1.5em;
+    text-align: center;
+}
+
+.code-subtitle {
+    font-size: 1em;
+    text-align: center;
+}
+
+p {
+    font-size: 1em;
+    text-align: left;
+    line-height: 200%;
+}
+
+li {
+    font-size: 1em;
+    text-align: left;
+    line-height: 1.5;
+}
+
+.caption {
+    font-size: 1.25em;
+    text-align: center;
+}
+
+h1 {
+    font-size: 2.25em;
+}
+
+.title {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px 0;
+}
+
+span {
+    font-size: 1.2em;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+#blogs {
+    border-left: 1.75px solid gray;
+}
+
+footer > p {
+    text-align: center;
+}
+
+.filtered-image {
+    max-width: 100%;
+    border: 1px solid black;
+}
+
+.side-by-side-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.side-by-side {
+    text-align: center;
+    margin: 0 10px; /* Adjust margin as needed */
+    flex: 1;
+    max-width: 300px; /* Adjust max-width as needed */
+}
+
+.code-box {
+    border: 1px solid black;
+    text-align: left;
+    background: gray;
+}
+
+.code-title{
+    text-align: center;
+}

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>MSJ Baseball Analytics</title>
+  <link rel="stylesheet" href="../css/blogs.css">
+  <link rel="icon" type="image/x-icon" href="../more/images/icon.png">
+</head>
+<p id="arrow"><a href="../projects.html"><</a></p>
+<body>
+<div class="container">
+  <h1>MSJ Baseball Analytics</h1>
+  <div class="subtitle">2024</div>
+  <br>
+  <div class="code-subtitle"><a href="../code/dashboard_code.html">Bits of code</a></div>
+  <div class="code-subtitle"><a href="https://jakesandersx.shinyapps.io/dashboard-demo/">Demo</a></div>
+  <br>
+
+  <p>
+  My <i>current</i> work! Although I cannot show you everything because we <i>do</i> use this stuff to our advantage day in and day out,
+  I'll provide a link to the demo of a dashboard our pitchers use. I'll just start by explaining that here.
+  </p>
+  <br>
+  <p>Some unfamilar terminology to start:</p>
+  <ul>
+    <li><b>FPS%</b>: First Pitch Strike % - how many of at-bats start with strike 1?</li>
+    <li><b>4PV</b>: 4 Pitch Verdict % - how many at-bats are 4-pitches or less?</li>
+    <li><b>CScore</b>: Contact Score - cumulative score of contact gradings</li>
+    <li><b>PR</b>: Pitching Runs - cumulative score of successful vs nonsuccessful innings</li>
+    <li><b>GScore</b>: Game Score <a href="https://www.mlb.com/glossary/advanced-stats/game-score">(Bill James)</a></li>
+    <li><b>PPI</b>: Pitches Per Inning</li>
+    <li><b>PBF</b>: Pitches Per Batter Faced</li>
+  </ul>
+  <ul>
+    <li><b>FLAIR</b>: Weak contact in the air</li>
+    <li><b>HOG</b>: Hard-{contact}-On-Ground</li>
+    <li><b>LD</b>: Line Drive</li>
+    <li><b>POP</b>: Pop-up</li>
+    <li><b>PWR</b>: Power shot (in the gap)</li>
+    <li><b>WEAK</b>: Weak ground ball</li>
+  </ul>
+  <br>
+  <p>The rest of the available information should be easy enough to understand for any (experienced) baseball fan. Now for the guts.</p>
+
+  <br>
+  <p>
+  All data is stored on a private google sheet, accessible to all of our players via a shared google account based for development, with access to hundreds
+  if not thousands of resources for improvement, from mechanics to strength and conditioning to recovery. But that's all extra. For the dashboard, I wanted
+  a visually-appealing and easy-to-understand page that would hold all available information needed for a pitcher to look at their stats and go "oh, I'm doing X
+  well, but Y bad", or "oh, I need to improve Z". This dashboard allows for all of that. In a standard green-good, red-bad approach, any specific pitcher is able
+  to tell whether or not the underlying numbers support them or need improved. Additionally, a yellow means they are the best on the team at any specific statistic.
+  </p>
+
+  <br>
+
+  <p>
+  All data is manually collected via charting during games, then manually uploaded to this google sheet. Although it can get quite tedious, I honestly don't mind the work.
+  Stuff such as the dashboard makes up for it, as I can provide insights to my teammates that might not be the most tech-savvy. The dashboard was a huge step in progress, as
+  before all we had was a google sheet with rows and rows of data, which any person could've easily gotten lost in if they weren't looking for the right information.
+  </p>
+
+  <br>
+
+  <p>
+  Currently, I'm working on some sort of manual pitch tracking system, similar to what you would get from a trackman (without spin metrics): pitch location, count, result, and more.
+  Being able to use something like this would also drastically help our staff out, helping with a broad range of topics like command and/or strengths and weakneses of pitch types.
+  </p>
+
+</div>
+<footer>
+  <br />
+</footer>
+</body>
+</html>

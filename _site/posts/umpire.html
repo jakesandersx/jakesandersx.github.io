@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Grading Umpires</title>
+    <link rel="stylesheet" href="../css/blogs.css">
+    <link rel="icon" type="image/x-icon" href="../more/images/icon.png">
+</head>
+<body>
+<header>
+    <div>
+        <h2><a href="../index.html">Home</a></h2>
+    </div>
+</header>
+<div class="container">
+    <h1>Grading MLB Umpires</h1>
+    <div class="subtitle">October 5, 2023</div>
+    <br>
+    <p>The role of an umpire cannot be understated. I would argue that an umpire has more control over the outcome of a game than any other referee / official in sports. Sure, you have line judges for sports like volleyball and tennis, but their jobs are constant and repetitive: if the ball touches the line, it is in. If it does not, the ball is out. The role of an umpire is trivial in a sense because their "lines" for balls and strikes are imaginary, and they need to paint the picture in their own head. Sure, the width of the plate stays the same and (most) batters are similar enough in height to where the height of the strike zone is not hugely changed, but they still need to be able to see the pitch and its movement, where it crosses over their invisible box, and make a decision, all within a split-second. And that is where things can get hairy.</p>
+    <br>
+    <h2>Gathering the Data</h2>
+    <p>Fortunately for us data enthusiasts, Major League Baseball (MLB) provides mountains of publicly available data through the use of Statcast. Since 2015, Statcast (and HawkEye) have allowed us to track data on every single pitch thrown in the MLB. These massive data dumps include things like the velocity and movement of the pitch, who was the pitcher and the batter, and most importantly for us, the resulting location of the pitch when it crosses the strike zone. We can scrape this data using any mainstream coding language of choice, but I chose to use Python for this project as it was what I was most comfortable with using at the time of working on this project. </p>
+    <br>
+    <p>Within the data dumps, I am only accessing 5 columns for every pitch: pitch_x, pitch_z, sz_top, sz_bot, and description. The columns pitch_x and pitch_z refer to the individual pitch's final x and y coordinates while crossing the strike zone. The next two columns, sz_top and sz_bot refer to the top and bottom of the strike zone, and these vary between every batter, as Statcast automatically calculates these numbers using every individual batter's height. Finally, the description column tells us what the result of the pitch was, and this is where we can find the umpire's decisions.</p>
+
+    <br>
+    <h2>Filtering</h2>
+    <p>Remember that these massive data dumps contain every single pitch ever thrown (since 2015), not just ones that we want to judge the umpires on. We need to remove two types of pitches:
+    <ul>
+        <li>Pitches that are swung at in any regard</li>
+        <li>Pitches that are not in the "shadow zone"</li>
+    </ul>
+    <p>For obvious reasons, we need to remove pitches that are swung at. If a batter swings at the pitch, the umpire doesn't need to make a decision on the pitch. This is easy enough to understand, but the shadow zone is where things get tricky. Out of all the pitches in an average MLB game, the umpire needs to make a (reasonable) decision on only about 50% of them. The other 50% of pitches are essentially no brainers: pitches that are either swung at, or obvious enough to a casual fan to make a call. A swing on a pitch is a strike 100% of the time, a pitch in the dirt is a ball 100% of the time. If a pitch is over the middle of the plate at the height of the batter's belly button, it will be a strike every time. These pitches are not in what is called the "shadow zone" of the strike zone, which is an area about a two-baseball-wide-area that spans the edge of the strike zone. This is where they make the big bucks. </p>
+
+    <br>
+    <h2>Analyzing</h2>
+    <p>Now that we have all of our unnecessary data removed, we can start to take a look at the data. I gave the umpires a little bit of wiggle-room and gave the following rule: "If 3/4 of the ball or more is inside the strike zone, it should be called a strike. If 1/4 of the ball or less is inside the strike zone, it should be called a ball." I came to terms with these rules as they seem realistic for real-world simulations. By definition, if any part of the ball touches the strike zone, it should be called a strike, but I do not that that is realistic. If 99.9% of the ball is off the plate but that slim 0.1% of the ball is touching the zone, should it be called a strike? That is for you to decide. </p>
+    <br>
+    <p>Inspired by UmpScorecards, I additionally used matplotlib and created visuals as seen below for every game. The report card, as I call it, shows everything I've mentioned before but in an easy-to-understand format. It shows the pitches that the umpire missed, their accuracy percentage, and the game they umpired, shown by the teams that played on whichever date it was.</p>
+    <img class="filtered-image" src="../more/images/2023-04-04_SD_AZ.png" />
+
+    <br>
+    <h2>Deep Data</h2>
+    <p>All of what I've said so far is uploaded to my github into a single python file, but this is where that changes. The job of someone in analytics or data science is to look at large amounts of data and analyze it for trends and patterns, and I've made that easy with a few additional files. Using one of the files named "all_games_xxx.py", you can get the data for all games using a specified date range, specifically all games for a single day, a single month, or a single year respectively. All of this data can be sent to a database management system of your choosing for further analysis if need-be.</p>
+
+    <br>
+    <h2>Conclusion</h2>
+    <p>Like I said before, the role of an MLB Umpire cannot be understated. Thanks to Statcast, all of this data is dumped into massive files and using our technical know-how, we can filter it into meaningful data we want to know. By visualizing data and giving the "report cards" of sorts, we can begin to understand how they affect not only their individual game in the moment, but also the game of baseball in the bigger picture.</p>
+</div>
+
+<footer>
+    <br />
+</footer>
+</body>
+</html>
