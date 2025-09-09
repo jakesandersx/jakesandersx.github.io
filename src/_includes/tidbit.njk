@@ -4,7 +4,7 @@ layout: base.njk
 <p><a href="{{ '/tidbits/' | url }}">&lt;</a></p>
 <article class="tidbit">
   <h1>{{ title or (page.fileSlug | replace('-', ' ')) }}</h1>
-  <p><time datetime="{{ date | date('yyyy-LL-dd') }}">{{ date | date('LLL d, yyyy') }}</time></p>
+  <p class="time"><time datetime="{{ date | date('yyyy-LL-dd') }}">{{ date | date('LLL d, yyyy') }}</time></p>
   <div class="content">
     {{ content | safe }}
   </div>

@@ -1,8 +1,11 @@
+/* Back button styling */
 p {
     padding-left: 10px;
     font-size: 1.2em;
     font-weight: bold;
 }
+
+/* Base layout */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -19,44 +22,36 @@ h1 {
     text-align: center;
 }
 
-.container div {
+/* Project card styling */
+.project-card {
+    display: block;
+    padding: 15px 20px;
+    margin: 15px 0;
+    background-color: #f4f4f4;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    color: inherit;             /* inherit text color */
+    text-decoration: none;      /* remove underline */
+    transition: all 0.2s ease-in-out;
+}
+
+.project-card:hover {
+    background-color: lightgreen;
+    border-color: lightgreen;
+    color: black;                /* text turns white */
+    cursor: pointer;
+}
+
+/* Header inside card (title + date row) */
+.project-card .card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 0;
 }
 
-.container h3 {
-    margin: 0;
-}
-
-.container h5 {
-    text-align: left;
-    margin: 10px 0 15px 0;
-}
-
-.container h4 {
-    margin: 0;
-    list-style: none;
-    padding-left: 0;
-}
-
-.container ul {
-    list-style-type: none;
-    padding-left: 0;
-}
-
-.container ul li {
+.project-card h3,
+.project-card h5 {
     margin: 5px 0;
-}
-
-.container ul li a {
-    text-decoration: none;
-    color: #0073e6;
-}
-
-.container ul li a:hover {
-    text-decoration: underline;
 }
 
 /* Footer styling */
@@ -66,5 +61,5 @@ footer {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 20px; /* Space between footer links */
+    gap: 20px; /* space between footer links */
 }

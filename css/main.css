@@ -10,6 +10,11 @@
     width: 50%;
     padding-left: 25%;
 }
+.tidbit-container {
+    width: 30%;
+    margin: 0 auto;
+    text-align: center;
+}
 
 /* spacing for tidbits index list */
 .tidbits-list {
@@ -23,10 +28,14 @@
     font-size: 1.1rem;
 }
 
+.time {
+    text-align: center;
+}
+
 /* spacing for tidbit post paragraphs */
 .tidbit .content p {
-    margin-bottom: 1rem; /* adds space below each paragraph */
-    line-height: 1.6;    /* makes text easier to read */
+    margin-bottom: 1.4rem; /* adds space below each paragraph */
+    line-height: 2.2;    /* makes text easier to read */
 }
 
 
