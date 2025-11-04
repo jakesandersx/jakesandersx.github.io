@@ -1,0 +1,158 @@
+.container {
+    width: 50%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.main-div {
+    display: flex;
+    justify-content: space-between;
+    width: 50%;
+    padding-left: 25%;
+}
+.tidbit-container {
+    width: 30%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+/* spacing for tidbits index list */
+.tidbits-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.tidbits-list li {
+    margin: 1.5rem 0;   /* vertical spacing between entries */
+    font-size: 1.1rem;
+}
+
+.time {
+    text-align: center;
+}
+
+/* spacing for tidbit post paragraphs */
+.tidbit .content p {
+    margin-bottom: 1.4rem; /* adds space below each paragraph */
+    line-height: 2.2;    /* makes text easier to read */
+}
+
+
+
+.blog-container {
+    width: 500px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.sections {
+    display: flex;
+    align-items: flex-start; /* Align sections to the top */
+    position: relative; /* Ensure the vertical line is positioned relative to this container */
+}
+
+.section {
+    width: 48%;
+    padding: 10px;
+}
+
+.separator {
+    width: 1px; /* Width of the vertical line */
+    background-color: #000; /* Color of the vertical line */
+    height: 100%;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+.title {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+}
+
+
+
+h2 {
+    font-size: 1.5em;
+    margin: 0;
+}
+
+#subtitle {
+    font-size: 1.3em;
+    text-align: center;
+}
+
+p {
+    font-size: 1em;
+    text-align: left;
+}
+
+h1 {
+    font-size: 2.25em;
+}
+
+.title {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px 0;
+}
+
+span {
+    font-size: 1.2em;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+#blogs {
+    border-left: 1.75px solid gray;
+}
+
+footer {
+    width: 600px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+/* CSS file: main.css */
+
+footer h5 {
+    margin: 0;
+}
+
+footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px; /* Adjusts space between the items */
+}
+
+.filtered-image {
+    max-width: 100%;
+}
+
+.blog-paragraph {
+    line-height: 200%;
+    font-size: 18px;
+}
+
+.side-by-side-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.side-by-side {
+    text-align: center;
+    margin: 0 10px; /* Adjust margin as needed */
+    flex: 1;
+    max-width: 300px; /* Adjust max-width as needed */
+}

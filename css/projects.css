@@ -1,0 +1,65 @@
+/* Back button styling */
+p {
+    padding-left: 10px;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+/* Base layout */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 30%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+}
+
+/* Project card styling */
+.project-card {
+    display: block;
+    padding: 15px 20px;
+    margin: 15px 0;
+    background-color: #f4f4f4;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    color: inherit;             /* inherit text color */
+    text-decoration: none;      /* remove underline */
+    transition: all 0.2s ease-in-out;
+}
+
+.project-card:hover {
+    background-color: lightgreen;
+    border-color: lightgreen;
+    color: black;                /* text turns white */
+    cursor: pointer;
+}
+
+/* Header inside card (title + date row) */
+.project-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.project-card h3,
+.project-card h5 {
+    margin: 5px 0;
+}
+
+/* Footer styling */
+footer {
+    text-align: center;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px; /* space between footer links */
+}
