@@ -1,17 +1,17 @@
 .container {
-    width: 30%;
+    width: 80%;
     margin: 0 auto;
     text-align: center;
 }
 
 .code-container {
-    width: 50%;
+    width: 80%;
     margin: 0 auto;
     text-align: center;
 }
 
 .section {
-    width: 48%;
+    width: 80%;
     padding: 10px;
 }
 
@@ -20,6 +20,7 @@ body {
     margin: 0;
     padding: 20px;
     background-color: white;
+    font-size: 1.2em;
 }
 
 .title {

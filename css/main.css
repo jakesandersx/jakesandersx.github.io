@@ -1,5 +1,5 @@
 .container {
-    width: 50%;
+    width: 80%;
     margin: 0 auto;
     text-align: center;
 }
@@ -7,41 +7,17 @@
 .main-div {
     display: flex;
     justify-content: space-between;
-    width: 50%;
-    padding-left: 25%;
-}
-.tidbit-container {
-    width: 30%;
-    margin: 0 auto;
-    text-align: center;
+    width: 80%;
+    margin: 0 10%;
 }
 
-/* spacing for tidbits index list */
-.tidbits-list {
-    list-style: none;
-    padding-left: 0;
-    margin: 0;
-}
-
-.tidbits-list li {
-    margin: 1.5rem 0;   /* vertical spacing between entries */
-    font-size: 1.1rem;
-}
 
 .time {
     text-align: center;
 }
 
-/* spacing for tidbit post paragraphs */
-.tidbit .content p {
-    margin-bottom: 1.4rem; /* adds space below each paragraph */
-    line-height: 2.2;    /* makes text easier to read */
-}
-
-
-
 .blog-container {
-    width: 500px;
+    width: 80%;
     margin: 0 auto;
     text-align: center;
 }
@@ -53,7 +29,7 @@
 }
 
 .section {
-    width: 48%;
+    width: 80%;
     padding: 10px;
 }
 
