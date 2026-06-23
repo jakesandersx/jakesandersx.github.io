@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Golden Record Registry</title>
+    <link rel="stylesheet" href="./css/blogs.css">
+    <link rel="icon" type="image/x-icon" href="resources/images/icon.png">
+</head>
+<p id="arrow"><a href="./index.html"><</a></p>
+<body>
+<div class="container">
+    <h1>Golden Record Registry</h1>
+    <div class="subtitle">Summer 2025</div>
+
+    <p>
+        A Golden Record Registry (GRR) pipeline was a problem I was introduced to and tasked with solving
+        as a major piece of my 2025 internship with the Cincinnati Reds. The core of the problem is mathematically
+        matching off seemingly duplicate entries into one "master" record from a singular dataset. The article
+        I've written here will be a simplified example of steps I took to complete this as well as explanations behind
+        terms used and decisions made along the way.
+    </p>
+
+    <br>
+
+    <h2>
+        The problem we are solving:
+    </h2>
+
+    <table>
+        <tr>
+            <th>
+                where the data came from
+            </th>
+            <th>
+                name
+            </th>
+            <th>
+                zip code
+            </th>
+            <th>
+                gender
+            </th>
+        </tr>
+        <tr>
+            <td>
+                CRM
+            </td>
+            <td>
+                Jake Sanders
+            </td>
+            <td>
+                45202
+            </td>
+            <td>
+                Male
+            </td>
+        </tr>
+        <tr>
+            <td>
+                customer billing
+            </td>
+            <td>
+                Jake Sanders
+            </td>
+            <td>
+                45202
+            </td>
+            <td>
+                Female
+            </td>
+        </tr>
+        <tr>
+            <td>
+                account sign-up
+            </td>
+            <td>
+                Jacob Sanders
+            </td>
+            <td>
+                45022
+            </td>
+            <td>
+                Male
+            </td>
+        </tr>
+    </table>
+
+    <h3>
+        These 3 distinct entries are all the <i>same</i> person. How can we mathematically remove duplicates?
+    </h3>
+
+    <p>
+        A human can look at these and think "these are obviously the same guy", but how can a computer or an
+        algorithm? Across tens of millions of rows of data, eyeballing a solution is impossible.
+        This problem is called <strong>record linkage</strong>, or if you are managing this within
+        a single dataset then <strong>deduplication</strong>. The entire approach is <strong>probabilistic</strong>.
+        We can never be 100% sure that two records are the same person, but instead we calculate a probability
+        of the two records being the same person. If the probability of our two records is higher than a preset
+        threshold, they will be matched off and deduplicated. The end result is a <strong>golden record</strong>,
+        which acts as one clean and trusted profile per person, built from the best pieces of all the scattered
+        copies. The system that produces it is the <strong>GRR - Golden Record Registry</strong>.
+    </p>
+
+    <br>
+
+    <h2>Step 1 - Clean and Standardize our data</h2>
+    <p>
+        Before we can compare anything, the data needs to be put in the same shape.
+        Different systems format their data differently: one might store my name as <strong>" Jake "</strong>
+        but another could store it as <strong>"JAKE"</strong>. These differences need reconciled because a computer
+        cannot tell that these are the same. Our first job is called <strong>grrMAP</strong> which takes all
+        of our raw records and rewrites them into a clean, uniformed table. Steps:
+    <ul>
+        <li>trim spaces and force lowercase</li>
+        <li>pad zip codes to fixed length</li>
+        <li>stamp each row with a <strong>source system</strong> indicating where the data came from </li>
+        <li>give each row a single unique id (called xref). If a record's identity needs two columns to be unique, we glue them into one ID first</li>
+    </ul>
+    </p>
+
+
+    <p>
+        We run grrMAP once per source system to compile the results into one shared table, which I will call the <strong>map table</strong>.
+        At this point, there is one extra column called <code>GRR_ID</code> which is currently left empty. The purpose of this
+        column is to eventually map it as an answer to "which real person is this?", which we don't know yet. Here is a quick code example:
+    </p>
+
+
+    <pre>
+<span class="keyword">def</span> <span class="func">grr_map</span>(raw, system, id_col):
+    out = {}
+    out['xref']   = raw[id_col]                  <span class="comment"># the record's unique id</span>
+    out['system'] = system                       <span class="comment"># where it came from</span>
+    out['grr_id'] = None                         <span class="comment"># the solution, filled in later</span>
+    out['name']   = raw['name'].strip().lower()  <span class="comment"># standardize text</span>
+    out['zip']    = raw['zip'].zfill(5)          <span class="comment"># pad to 5 digits</span>
+    <span class="keyword">return</span> out
+</pre>
+
+    <br>
+    <br>
+
+    <h2>Step 2 - Don't compare everyone to everyone (blocking)</h2>
+    <p>
+        Now we want to compare records against each other to find duplicates. The easiest
+        and most obvious solution? Compare every record against each other! Unfortunately, this
+        is the most expensive and least feasible solution, at least computationally. With only 1 million records,
+        we would be looking at <strong>500 billion</strong> comparisons, far too many. The fix is a blocking rule.
+        The thought process is that most records are very obviously NOT the same person, so don't bother comparing
+        them. A blocking rule groups records together based on some cheap shared values, and we only compare
+        records contained within the same group. A blocking key should be something that true duplicates will
+        basically always agree on, but still splits the data into manageable chunks. Common choices are:
+    <ul>
+        <li>the first letter of the last name</li>
+        <li>zip code</li>
+        <li>state</li>
+    </ul>
+    </p>
+
+    <p>
+        For example, blocking on the first letter of the last name would put every "Sanders" and "Sanderson"
+        in the same group and they would be compared to each other. They would never get compared to other entries
+        such as those with last names of "Highlands" or "Kyne" because the first letter of the last name does not match.
+        Even with a few simple rules, we can drastically reduce the number of comparisons we are making into much more practical
+        chunks.
+    </p>
+
+    <i class="left">Note of caution: a blocking rule sets a ceiling on what you can find. If two records
+        of the same person happen to fall through and land in different blocks, you'll never compare them,
+        so you can never match them off. Pick keys carefully.
+    </i>
+
+    <br>
+
+    <p>
+        The output of this step is a list of candidate pairs, which are pairs of records
+        worth comparing to each other.
+    </p>
+
+    <br>
+
+    <h2>Step 3 - Compare each pair, by field</h2>
+    <p>
+        For each candidate pair, we iterate by field and ask a simple question of <strong>do these agree or not?</strong>
+        We can use a simple binary table of 1s (agreements) and 0s (disagreements). The result is what we call a
+        <strong>comparison vector table</strong> which is a compacted summary of which data is matching. For the example
+        walkthrough, let's assume we have the data below:
+    </p>
+
+    <table>
+        <tr>
+            <th>name_1</th>
+            <th>name_2</th>
+            <th>zip_1</th>
+            <th>zip_2</th>
+            <th>gender_1</th>
+            <th>gender_2</th>
+            <th>name_match</th>
+            <th>zip_match</th>
+            <th>gender_match</th>
+        </tr>
+        <tr>
+            <td>Jake Sanders</td>
+            <td>Jake Sanders</td>
+            <td>45202</td>
+            <td>45202</td>
+            <td>Male</td>
+            <td>Male</td>
+            <td class="highlight"><strong>1</strong></td>
+            <td class="highlight"><strong>1</strong></td>
+            <td class="highlight"><strong>1</strong></td>
+        </tr>
+        <tr>
+            <td>Jake Sanders</td>
+            <td>Bryce Dugar</td>
+            <td>45202</td>
+            <td>45123</td>
+            <td>Male</td>
+            <td>Male</td>
+            <td class="highlight"><strong>0</strong></td>
+            <td class="highlight"><strong>0</strong></td>
+            <td class="highlight"><strong>1</strong></td>
+        </tr>
+        <tr>
+            <td>Jacob Sanders</td>
+            <td>Jake Sanders</td>
+            <td>45202</td>
+            <td>45201</td>
+            <td>Male</td>
+            <td>Male</td>
+            <td class="highlight"><strong>0</strong></td>
+            <td class="highlight"><strong>0</strong></td>
+            <td class="highlight"><strong>1</strong></td>
+        </tr>
+        <tr>
+            <td>Jake Sanders</td>
+            <td>Jacob Sanderson</td>
+            <td>45202</td>
+            <td>45123</td>
+            <td>Male</td>
+            <td>Male</td>
+            <td class="highlight"><strong>0</strong></td>
+            <td class="highlight"><strong>0</strong></td>
+            <td class="highlight"><strong>1</strong></td>
+        </tr>
+        <tr>
+            <td>Jake Sanders</td>
+            <td>Jenna Sandington</td>
+            <td>45202</td>
+            <td>12345</td>
+            <td>Male</td>
+            <td>Female</td>
+            <td class="highlight"><strong>0</strong></td>
+            <td class="highlight"><strong>0</strong></td>
+            <td class="highlight"><strong>0</strong></td>
+        </tr>
+        <tr>
+            <td>Jake Sanders</td>
+            <td>Jake Sanders</td>
+            <td>45202</td>
+            <td>12345</td>
+            <td>Male</td>
+            <td>Male</td>
+            <td class="highlight"><strong>1</strong></td>
+            <td class="highlight"><strong>0</strong></td>
+            <td class="highlight"><strong>1</strong></td>
+        </tr>
+    </table>
+
+    <p>
+        But asking "do they agree?" is tricky for human input text, because people notoriously make typos.
+    </p>
+
+    <br>
+
+    <h3>Handling typos: similarity instead of exact match</h3>
+    <p>
+        <code>Sanders</code> and <code>Sanderz</code> are very likely meant to refer to the same last name with a human
+        making a typo. If we matched off last name on exact-matches only, this (and thousands of real-world examples) would
+        immediately get thrown out, and we don't want that. Instead of demanding exact equality, we
+        can measure how similar two strings are on a scale from 0 (nothing alike) to 1 (identical). Then, we
+        can set a passing threshold to where if the similarity score between two strings is above the threshold,
+        they can be matched off. There are two common ways to measure similarity between strings:
+    </p>
+    <ul>
+        <li>
+            <strong>Levenshtein Distance</strong> counts how many single-character edits (inserts, deletes, swaps) it would
+            take to turn one string to another. <code>Sanders -> Sanderz</code> would be a count of 1 edit. Logically, the fewer number
+            of edits, the more similar your strings are. However, because it is a raw count of edits, it needs to be normalized
+            to a 0-1 scale to account for string length. If you have to make 2 edits between strings, the similarity would be significantly
+            less if the strings are both 5 characters rather than if they are both 10 characters, even though the raw count of edits needed
+            is the same. So, we use the formula <code>s = (L - d) / L</code> where <code>s</code> is the normalized similarity,
+            <code>L</code> is the length of the string, and <code>d</code> is the number of edits.
+        </li>
+        <li>
+            <strong>Jaro-Winkler</strong> also measures similarity, but gives extra weight to the beginning of the string.
+                This is because of human nature, where people have a tendency to get the beginning of a word correct, but
+                fumble towards the end. It's more forgiving than Levenshtein and works especially well on names. It comes out
+                on a 0-1 scale by default, so no transformation needed.
+        </li>
+    </ul>
+
+    <p>
+        For step 3, a field "agrees" if it is an exact match or its similarity score clears a preset threshold
+        (if, for that field, we want to use similarity). For most scenarios, we set a threshold of <code>0.85</code>.
+        After changing the algorithm to use Jaro-Winkler rather than direct matching, notice how our vector table changes:
+    </p>
+
+    <table>
+        <tr>
+            <th>name_1</th>
+            <th>name_2</th>
+            <th>zip_1</th>
+            <th>zip_2</th>
+            <th>gender_1</th>
+            <th>gender_2</th>
+            <th>jaro-winkler score</th>
+            <th>name_match</th>
+            <th>zip_match</th>
+            <th>gender_match</th>
+        </tr>
+        <tr>
+            <td>Jake Sanders</td>
+            <td>Jake Sanders</td>
+            <td>45202</td>
+            <td>45202</td>
+            <td>Male</td>
+            <td>Male</td>
+            <td class="green"><strong>1.0</strong></td>
+            <td class="green"><strong>1</strong></td>
+            <td class="highlight"><strong>1</strong></td>
+            <td class="highlight"><strong>1</strong></td>
+        </tr>
+        <tr>
+            <td>Jake Sanders</td>
+            <td>Bryce Dugar</td>
+            <td>45202</td>
+            <td>45123</td>
+            <td>Male</td>
+            <td>Male</td>
+            <td class="red"><strong>0.56</strong></td>
+            <td class="red"><strong>0</strong></td>
+            <td class="highlight"><strong>0</strong></td>
+            <td class="highlight"><strong>1</strong></td>
+        </tr>
+        <tr>
+            <td>Jacob Sanders</td>
+            <td>Jake Sanders</td>
+            <td>45202</td>
+            <td>45201</td>
+            <td>Male</td>
+            <td>Male</td>
+            <td class="green"><strong>0.89</strong></td>
+            <td class="green"><strong>1</strong></td>
+            <td class="highlight"><strong>0</strong></td>
+            <td class="highlight"><strong>1</strong></td>
+        </tr>
+        <tr>
+            <td>Jake Sanders</td>
+            <td>Jacob Sanderson</td>
+            <td>45202</td>
+            <td>45123</td>
+            <td>Male</td>
+            <td>Male</td>
+            <td class="green"><strong>0.86</strong></td>
+            <td class="green"><strong>1</strong></td>
+            <td class="highlight"><strong>0</strong></td>
+            <td class="highlight"><strong>1</strong></td>
+        </tr>
+        <tr>
+            <td>Jake Sanders</td>
+            <td>Jenna Sandington</td>
+            <td>45202</td>
+            <td>12345</td>
+            <td>Male</td>
+            <td>Female</td>
+            <td class="red"><strong>0.63</strong></td>
+            <td class="red"><strong>0</strong></td>
+            <td class="highlight"><strong>0</strong></td>
+            <td class="highlight"><strong>0</strong></td>
+        </tr>
+        <tr>
+            <td>Jake Sanders</td>
+            <td>Jake Sanders</td>
+            <td>45202</td>
+            <td>12345</td>
+            <td>Male</td>
+            <td>Male</td>
+            <td class="green"><strong>1.0</strong></td>
+            <td class="green"><strong>1</strong></td>
+            <td class="highlight"><strong>0</strong></td>
+            <td class="highlight"><strong>1</strong></td>
+        </tr>
+    </table>
+
+    <br>
+
+    <h2>
+        Step 4 - How much does each agreement actually mean?
+    </h2>
+
+    <p>
+        This step is the core of the whole system: Not all agreements are equally meaningful.
+        If two records agree on <strong>last name</strong>, that's strong evidence the two records indicate
+        the same person, as last names are reasonably distinctive. But if two records agree on gender, that's
+        much weaker evidence that two records indicate the same gender: you have a 50/50 chance of sharing a gender
+        with a random stranger, so it barely tells us anything. We need a way to mathematically express <i>how much an
+        agreement on each field is worth</i>. Insert m/u probabilities.
+    </p>
+
+    <ul>
+        <li>
+            <strong>m_prob (match probability)</strong>: if two records really are the same person, how often
+            does this field agree? For last name, this is extremely high. If it's truly the same person, the last
+            names <i>should</i> always match (human errors like typos prevent this from being 100%). We might assume
+            <code>m_prob = 0.90</code>
+        </li>
+        <li>
+            <strong>u_prob (unmatch probability)</strong>: if two records are different people, how often
+            does this field agree by coincidence alone? For last name, this would be extremely low, as two random
+            strangers are very unlikely to share a last name. We might assume <code>u_prob = 0.005</code>
+        </li>
+    </ul>
+
+    <p>
+        Read them as a pair: a field where the match rate (m) is <u>high</u> and coincidence rate is <u>low</u> is a
+        <i>powerful</i> field for telling people apart. A field where m and u are close together (like gender, where
+        m = 0.99 but u = 0.5) carries far less weight, because agreement is nearly as common among strangers as it is true matches.
+        So, where do our M and U numbers come from? We need both for every field, which we can store in a config table.
+        There are two ways to get them:
+    </p>
+
+    <p>
+        <strong><u>If you have labeled examples</u></strong> where historical pairs have already
+        been labeled "matching" or "non-matching" then you can just count:
+    <ul>
+        <li>
+            m_prob for a field = (how often it agrees among known matches)
+        </li>
+        <li>
+            u_prob for a field = (how often it agrees among known non-matches)
+        </li>
+    </ul>
+
+    </p>
+
+    <p>
+        <strong><u>If you have no labels</u></strong> (usual), we can use an algorithm called <a href="em.html"><strong>Expectation
+        Maximization</strong></a>. The thought process is that even though we don't know the true matches, we can
+        start with an educated guess for our m/u probability, use that number to estimate the m/u probability,
+        then recursively plug the results back into the algorithm. We would continually repeat this process until
+        the numbers stop changing, or we reach a point of diminishing return. The algorithm in question
+        is looping over 2 steps:
+    </p>
+    <ol>
+        <li>Expectation: with the current m/u numbers, estimate the probability that each pair is a match</li>
+        <li>Maximization: use the estimated probability results to recompute better m/u numbers</li>
+    </ol>
+
+    <br />
+    <br />
+
+    <h2>Step 5 - Turn our evidence into a score</h2>
+    <p>
+        Now, we can combine the clues into a single score for each pair. We will be using
+        Bayes Factor, which indicates how much a single clue tips the scale. A Bayes Factor is a
+        ratio that says how much more (or less) likely an observation is if the records match versus
+        if they don't. For a field that agrees, it's <code>m_prob / u_prob</code>. For example, if we have
+        a matching field where the <code>m_prob = 0.95</code> and <code>u_prob = 0.01</code>, that would give us
+        <code>Bayes Factor = 0.95 / 0.01 = 95</code>. The interpretation is that seeing this agreement is <strong>
+        95 times more likely</strong> if the records are the same person than if they aren't, which is <u>very strong</u>
+        evidence indicating a true match. We can use this strategy in the reverse as well. Suppose two records
+        disagree on gender. Among true matches, a gender mismatch is very rare (say <code>m = 0.01</code>), but among strangers
+        gender coincidentally matches about half the time (<code>u = 0.5</code>). The Bayes Factor for this situation would
+        be <code>Bayes Factor = 0.01 / 0.5 = 0.02</code>, or 1/50. This is <strong>50 times less likely</strong> if they're a
+        match, strong evidence against this pairing. Each field within a single comparison gives us a Bayes Factor,
+        standardized at 1: above 1 pushes towards "same person", below 1 pushes toward "different entities".
+    </p>
+
+    <br>
+
+    <p>
+        To score a pair, we want to combine all the Bayes Factors together into one final result, with
+        one caveat. Multiplying these numbers together is numerically fiddly and can get unstable. We resolve for this
+        by taking the logarithm of each Bayes Factor in log base 2, because we can then turn our multiplication between Bayes Factors
+        into an addition between logarithms, which is much faster, easier, and stable.
+        The log2(Bayes Factor) of each field is its <strong>match weight</strong>. A positive number supports a match
+        while a negative number will argue against one.
+        Ideally, you would have some sort of lookup table where values are already calculated for you. To do this,
+        run the previously discussed Expectation-Maximization algorithm for each field to find the Bayes Factor, then
+        convert that to a match weight, which again is the logarithm of the Bayes Factor. The exact m/u probabilities
+        should ideally be learned from labeled data or estimated with EM. The values below are illustrative only. In
+        general, a standardized full-name match should contribute more evidence than a ZIP-code
+        match, because names are usually more discriminative than ZIPs. We will use the below table
+        for our lookup values:
+    </p>
+
+    <table>
+        <tr>
+            <th>column name</th>
+            <th>scenario</th>
+            <th>m_prob</th>
+            <th>u_prob</th>
+            <th>bayes factor</th>
+            <th>match weight</th>
+        </tr>
+        <tr>
+            <td>name</td>
+            <td class="highlight">match</td>
+            <td>0.90</td>
+            <td>0.0002</td>
+            <td>4500</td>
+            <td class="highlight">12.14</td>
+        </tr>
+        <tr>
+            <td>name</td>
+            <td class="highlight">non-match</td>
+            <td>0.10</td>
+            <td>0.9998</td>
+            <td>0.1</td>
+            <td class="highlight">-3.32</td>
+        </tr>
+        <tr>
+            <td>zip code</td>
+            <td class="highlight">match</td>
+            <td>0.55</td>
+            <td>0.005</td>
+            <td>110</td>
+            <td class="highlight">6.78</td>
+        </tr>
+        <tr>
+            <td>zip code</td>
+            <td class="highlight">non-match</td>
+            <td>0.45</td>
+            <td>0.995</td>
+            <td>0.45</td>
+            <td class="highlight">-1.14</td>
+        </tr>
+        <tr>
+            <td>gender</td>
+            <td class="highlight">match</td>
+            <td>0.99</td>
+            <td>0.50</td>
+            <td>1.98</td>
+            <td class="highlight">0.99</td>
+        </tr>
+        <tr>
+            <td>gender</td>
+            <td class="highlight">non-match</td>
+            <td>0.01</td>
+            <td>0.50</td>
+            <td>0.02</td>
+            <td class="highlight">-5.64</td>
+        </tr>
+    </table>
+
+
+    <p>
+        However, we need to have some sort of baseline to compare our new information to. Before looking at
+        any fields, what is the baseline chance that two randomly chose records are the same person?
+        This is our <strong>prior probability</strong> and if your gut tells you it's going to be tiny, you'd be correct. If
+        you have 1 million records in a database, you might expect 1 in 20,000 pairs to be a duplicate. In that case,
+        our prior probability would be <code>1 / 20,000 = 0.00005</code>. We express the prior in the same logarithm units
+        as everything else (called the prior_log) so that it too can be added straight into the score as our starting
+        offset. For our working example, we will use a highly forgiving number of 1 in 100, or 0.01, or <code>-6.64</code>. This prior score indicates our initial skepticism: pairs start out as assumed to be different,
+        and our field evidence needs to overcome that. We express the prior in the same logarithm units as everything else (called the prior_log) so that
+        it too can be added straight into the score as our starting offset. This prior score indicates our initial
+        skepticism: pairs start out as assumed to be different, and our field evidence needs to overcome that.
+    </p>
+
+    <h4>Putting it together</h4>
+    <p>
+        The match score for a pair is:
+    <ul>
+        <li>
+            score = (prior_log) + sum of match weights (log of Bayes Factors)
+        </li>
+    </ul>
+    </p>
+
+    <p>
+        A pair that agrees on lots of distinctive fields piles up positive weights and
+        ends with a high score, vice versa for a pair that disagrees will pile negatively.
+        Let's walk through the examples we have:
+    </p>
+
+    <p>
+        This is the same table from above with the Jaro-Winkler column taken out. I have added
+        a simple ID column as well so we can keep track of the rows across tables:
+    </p>
+    <table>
+        <tr>
+            <th>PAIR ID</th>
+            <th>name_1</th>
+            <th>name_2</th>
+            <th>zip_1</th>
+            <th>zip_2</th>
+            <th>gender_1</th>
+            <th>gender_2</th>
+            <th>name_match</th>
+            <th>zip_match</th>
+            <th>gender_match</th>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>Jake Sanders</td>
+            <td>Jake Sanders</td>
+            <td>45202</td>
+            <td>45202</td>
+            <td>Male</td>
+            <td>Male</td>
+            <td class="highlight"><strong>1</strong></td>
+            <td class="highlight"><strong>1</strong></td>
+            <td class="highlight"><strong>1</strong></td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Jake Sanders</td>
+            <td>Bryce Dugar</td>
+            <td>45202</td>
+            <td>45123</td>
+            <td>Male</td>
+            <td>Male</td>
+            <td class="highlight"><strong>0</strong></td>
+            <td class="highlight"><strong>0</strong></td>
+            <td class="highlight"><strong>1</strong></td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>Jacob Sanders</td>
+            <td>Jake Sanders</td>
+            <td>45202</td>
+            <td>45201</td>
+            <td>Male</td>
+            <td>Male</td>
+            <td class="highlight"><strong>1</strong></td>
+            <td class="highlight"><strong>0</strong></td>
+            <td class="highlight"><strong>1</strong></td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>Jake Sanders</td>
+            <td>Jacob Sanderson</td>
+            <td>45202</td>
+            <td>45123</td>
+            <td>Male</td>
+            <td>Male</td>
+            <td class="highlight"><strong>1</strong></td>
+            <td class="highlight"><strong>0</strong></td>
+            <td class="highlight"><strong>1</strong></td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>Jake Sanders</td>
+            <td>Jenna Sandington</td>
+            <td>45202</td>
+            <td>12345</td>
+            <td>Male</td>
+            <td>Female</td>
+            <td class="highlight"><strong>0</strong></td>
+            <td class="highlight"><strong>0</strong></td>
+            <td class="highlight"><strong>0</strong></td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>Jake Sanders</td>
+            <td>Jake Sanders</td>
+            <td>45202</td>
+            <td>12345</td>
+            <td>Male</td>
+            <td>Male</td>
+            <td class="highlight"><strong>1</strong></td>
+            <td class="highlight"><strong>0</strong></td>
+            <td class="highlight"><strong>1</strong></td>
+        </tr>
+    </table>
+
+    <p>
+        All we need to take from this table is the final 3 columns in which we have calculated
+        whether the fields from the two entries are matches or not. That would transform it to:
+    </p>
+
+    <table>
+        <tr>
+            <th>PAIR ID</th>
+            <th>name_match</th>
+            <th>zip_match</th>
+            <th>gender_match</th>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>1</td>
+            <td>1</td>
+            <td>1</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>0</td>
+            <td>0</td>
+            <td>1</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>1</td>
+            <td>0</td>
+            <td>1</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>1</td>
+            <td>0</td>
+            <td>1</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>1</td>
+            <td>0</td>
+            <td>1</td>
+        </tr>
+    </table>
+
+    <p>
+        Now, we can add in our lookup values for the corresponding match weights.
+    </p>
+
+    <table>
+        <tr>
+            <th>PAIR ID</th>
+            <th>prior_log</th>
+            <th>name_match</th>
+            <th>name_weight</th>
+            <th>zip_match</th>
+            <th>zip_weight</th>
+            <th>gender_match</th>
+            <th>gender_weight</th>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>-6.64</td>
+            <td>1</td>
+            <td>12.14</td>
+            <td>1</td>
+            <td>6.78</td>
+            <td>1</td>
+            <td>0.99</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>-6.64</td>
+            <td>0</td>
+            <td>-3.32</td>
+            <td>0</td>
+            <td>-1.14</td>
+            <td>1</td>
+            <td>0.99</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>-6.64</td>
+            <td>1</td>
+            <td>12.14</td>
+            <td>0</td>
+            <td>-1.14</td>
+            <td>1</td>
+            <td>0.99</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>-6.64</td>
+            <td>1</td>
+            <td>12.14</td>
+            <td>0</td>
+            <td>-1.14</td>
+            <td>1</td>
+            <td>0.99</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>-6.64</td>
+            <td>0</td>
+            <td>-3.32</td>
+            <td>0</td>
+            <td>-1.14</td>
+            <td>0</td>
+            <td>-5.64</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>-6.64</td>
+            <td>1</td>
+            <td>12.14</td>
+            <td>0</td>
+            <td>-1.14</td>
+            <td>1</td>
+            <td>0.99</td>
+        </tr>
+    </table>
+    <p>
+        Take away the match boolean columns, and add together all the values to get the match weight:
+    </p>
+
+
+    <table>
+        <tr>
+            <th>PAIR ID</th>
+            <th>prior_log</th>
+            <th>name_weight</th>
+            <th>zip_weight</th>
+            <th>gender_weight</th>
+            <th>match_weight</th>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>-6.64</td>
+            <td>12.14</td>
+            <td>6.78</td>
+            <td>0.99</td>
+            <td>13.27</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>-6.64</td>
+            <td>-3.32</td>
+            <td>-1.14</td>
+            <td>0.99</td>
+            <td>-10.11</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>-6.64</td>
+            <td>12.14</td>
+            <td>-1.14</td>
+            <td>0.99</td>
+            <td>5.35</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>-6.64</td>
+            <td>12.14</td>
+            <td>-1.14</td>
+            <td>0.99</td>
+            <td>5.35</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>-6.64</td>
+            <td>-3.32</td>
+            <td>-1.14</td>
+            <td>-5.64</td>
+            <td>-16.74</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>-6.64</td>
+            <td>12.14</td>
+            <td>-1.14</td>
+            <td>0.99</td>
+            <td>5.35</td>
+        </tr>
+    </table>
+
+    <p>
+        Additionally, we can actually get the exact probability from these match weights!
+        The formula is <code>p = (2^w) / (1+2^w)</code> with w as the match weight:
+    </p>
+
+    <table>
+        <tr>
+            <th>PAIR ID</th>
+            <th>match_weight</th>
+            <th>probability</th>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>13.27</td>
+            <td class="green">0.9998</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>-10.11</td>
+            <td class="red">0.0009</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>5.35</td>
+            <td class="green">0.9760</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>5.35</td>
+            <td class="green">0.9760</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>-16.74</td>
+            <td class="red">0.0000</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>5.35</td>
+            <td class="green">0.9760</td>
+        </tr>
+    </table>
+
+    <h2>Step 6 - Making a Decision</h2>
+
+    <p>
+        And that is all the math required! But now we need to make a decision. A score
+        is just a number, and a probability is just a percentage. We need to set thresholds:
+        <ul>
+            <li>
+                <strong>Match Threshold (upper bound)</strong>: scores above this are confidently the same person
+            </li>
+            <li>
+                <strong>Review Threshold (lower bound)</strong>: scores above this but not above the Match Threshold get flagged for review
+            </li>
+        </ul>
+    </p>
+    <p>
+        Any scores that fall below the review threshold are confidently non-matches and assumed to be different people.
+        You could technically compute statistically optimal thresholds, but we can reasonably pick values ourselves.
+        In my scenario, we decided on ~95% for the Match Threshold and ~85% for the Review Threshold. The pairs that
+        fall through and land in the review section are called <strong>fallout</strong>, and we have 2 types:
+    <ul>
+        <li>
+            <strong>True Negatives</strong>: genuinely different people, but close enough to not warrant total rejection
+        </li>
+        <li>
+            <strong>False Negatives</strong>: actually the same person, but the algorithm missed it
+        </li>
+    </ul>
+    </p>
+
+    <h2>Step 7 - Group records together and assign a GRR_ID</h2>
+    <p>
+        So far we've compared records two at a time. But, consider: A matches to B, and B matches to C. We can
+        denote that A matches to C, and we don't have to waste time running it through the calculation algorithm.
+        How can we extrapolate this? The way to solve this is setting up a node structure. Picture every record
+        as a dot, and draw a line between any two dots that we deem are a match. Any dots that are connected whether
+        it be directly together or through a chain will form a <strong>cluster</strong>, and <strong>each cluster
+        is one person</strong>. For each cluster, we can assign it a unique <code>GRR_ID</code> and label every
+        record contained within the cluster with that ID. Remember the empty column from Step 1? This step
+        is filling that in, and we will call it <strong>grrScore</strong>.
+    </p>
+
+    <p>
+        An important note here is that we need to pick a stable, canonical ID for each cluster and reuse it
+        every time this step is ran. If IDs get shuffled every re-run, anything that relies on <code>GRR_ID</code>
+        (such as a master table acting as a source of truth) would break. This would be an <strong>upsert</strong>
+        approach where we "update if it exists, insert if it doesn't" rather than completely re-writing.
+        A simplified version of the function could look like this:
+    </p>
+    <pre>
+<span class="comment"># matches are "edges"; records are "nodes"; each connected cluster = one person</span>
+<span class="keyword">import</span> <span class="module">networkx</span> <span class="keyword">as</span> <span class="alias">nx</span>
+
+<span class="var">G</span> = <span class="alias">nx</span>.<span class="func">Graph</span>()
+<span class="var">G</span>.<span class="func">add_nodes_from</span>(<span class="var">all_record_ids</span>)          <span class="comment"># everyone, even loners</span>
+<span class="var">G</span>.<span class="func">add_edges_from</span>(<span class="var">matched_pairs</span>)           <span class="comment"># a line per confident match</span>
+
+<span class="keyword">for</span> <span class="var">cluster</span> <span class="keyword">in</span> <span class="alias">nx</span>.<span class="func">connected_components</span>(<span class="var">G</span>):
+    <span class="var">person_id</span> = <span class="func">min</span>(<span class="var">cluster</span>)              <span class="comment"># stable canonical id</span>
+    <span class="keyword">for</span> <span class="var">record</span> <span class="keyword">in</span> <span class="var">cluster</span>:
+        <span class="func">assign</span>(<span class="var">record</span>, <span class="var">grr_id</span>=<span class="var">person_id</span>)
+</pre>
+
+    <h3>Step 8 - Build out the Golden Record</h3>
+    <p>
+        Each person's cluster may contain several rows that disagree on the details.
+        CRM might have one zip code while the Billing table has another. There needs to
+        be some sort of rule put in place where we assemble one trustworthy profile per
+        person. The key to this is we set these rules up by field, not by row. For
+        each output field, we decide which source system to trust the most, using
+        a ranking table. Maybe CRM is most reliable for names, but Billing is more reliable
+        in getting addresses. The golden record would take the name from CRM and the ZIP code
+        from Billing, cherry-picking the best source for each field rather than copying the entire
+        row from the upstream source whole. We called this step <strong>hierarchy</strong>, and
+        a simple example would look like this:
+    </p>
+    <table>
+        <tr>
+            <th>field</th>
+            <th>source</th>
+        </tr>
+        <tr>
+            <td>name</td>
+            <td>CRM</td>
+        </tr>
+        <tr>
+            <td>zip</td>
+            <td>Billing</td>
+        </tr>
+        <tr>
+            <td>email</td>
+            <td>Account Creation</td>
+        </tr>
+        <tr>
+            <td>email</td>
+            <td>Account</td>
+        </tr>
+        <tr>
+            <td>last login</td>
+            <td>Account</td>
+        </tr>
+        <tr>
+            <td>company</td>
+            <td>Account</td>
+        </tr>
+        <tr>
+            <td>phone</td>
+            <td>CRM</td>
+        </tr>
+        <tr>
+            <td>[social media address]</td>
+            <td>CRM</td>
+        </tr>
+    </table>
+
+    <p>
+        After that, we would have another job which collapses everything into
+        one row for the specific user's <code>GRR_ID</code> and writes the golden
+        records into our final table which we can use as a source of truth. Like before,
+        it will use an upsert process so in the event of re-runs it will not reset a
+        person's <code>GRR_ID</code> or create duplicated. And finally, we have arrived at
+        our goal: one clean, deduplicated, best-of-all-sources record per real person.
+    </p>
+
+    <h2>TLDR</h2>
+    <ol>
+        <li>Clean and Standardize our data</li>
+        <li>Act on a blocking rule to limit computations</li>
+        <li>Compare our pairs by each field</li>
+        <li>Calculate m/u probability for each field</li>
+        <li>Turn those probabilities into scores</li>
+        <li>Run the scores through a threshold to get matches</li>
+        <li>Chain our matches into clusters</li>
+        <li>Build out our master table for each cluster</li>
+    </ol>
+    <p>
+        Every concept is equally important and relied upon by the other steps.
+    </p>
+</div>
+<footer>
+    <br />
+</footer>
+</body>
+</html>

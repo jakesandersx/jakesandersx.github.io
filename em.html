@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Expectation-Maximization Algorithm</title>
+    <link rel="stylesheet" href="./css/blogs.css">
+    <link rel="icon" type="image/x-icon" href="resources/images/icon.png">
+</head>
+<p id="arrow"><a href="./grr.html"><</a></p>
+<body>
+<div class="container">
+    <h1>Expectation-Maximization Algorithm</h1>
+
+    <p>
+        The Expectation-Maximization Algorithm (EM) aims to help us estimate
+        the m/u probabilities for all fields being used for matching. It does this
+        with an initial guessing step, then a re-estimation step that repeats
+        indefinitely until the numbers stabilize.
+    </p>
+
+    <br>
+
+    <h2>
+        Step 1 - Start with an initial guess
+    </h2>
+
+    <p>
+       The algorithm is given ballparked starting values for each field. This might look
+        something like this:
+    </p>
+    <ul>
+        <li><strong>Name:</strong> m = 0.90, u = 0.001</li>
+        <li><strong>ZIP:</strong> m = 0.55, u = 0.005</li>
+        <li><strong>Gender:</strong> m = 0.99, u = 0.5</li>
+    </ul>
+    <p>
+        In reference to the term "ballpark", these numbers do not need to be perfect.
+        Technically, you could make these numbers anything you want, but it will take
+        substantially longer to compute. Generally, human intuition is good enough for
+        a starting point here.
+    </p>
+
+    <br>
+
+    <h2>Step 2 - Expectation</h2>
+    <p>
+        Using the current values, we score every pair and estimate: <u>what is the
+    probability this pair is <i>truly</i> a match?</u> After this step, every pair
+        will get a soft label rather than a hard yes/no:
+    </p>
+    <ul>
+        <li>Pair A might be 0.99</li>
+        <li>Pair B might be 0.17</li>
+        <li>Pair C might be 0.002</li>
+    </ul>
+    <p>
+        This step is called Expectation because all we are doing is computing the <i>
+        expected</i> match status of each pair under our current model.
+    </p>
+
+    <br>
+
+    <h2>Step 3 - Maximization</h2>
+
+    <p>
+        Now, we treat the estimated match probabilities we just calculated as weights
+        and recompute the m/u values. For example, if name agreement appears mostly
+        in pairs that have high probability of being true matches, the estimated M value
+        for name stays high. Or, if ZIP agreement appears frequently even among pairs
+        with low match probability, the estimated U value for ZIP will rise. Continually
+        applying this step will better fit our actual data.
+    </p>
+
+    <br>
+
+    <h2>Step 4 - Repeat</h2>
+    <p>
+        Our EM algorithm will repeat steps 2 and 3 until we start approaching
+        convergence, where the numbers are only changing by 0.01 or less every
+        re-run. Once we reach that point, we have successfully estimated
+        our m/u probability for every field used in our GRR.
+    </p>
+</div>
+<footer>
+    <br />
+</footer>
+</body>
+</html>
