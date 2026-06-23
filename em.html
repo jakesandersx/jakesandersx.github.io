@@ -1,87 +1,218 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Expectation-Maximization Algorithm</title>
     <link rel="stylesheet" href="./css/blogs.css">
     <link rel="icon" type="image/x-icon" href="resources/images/icon.png">
 </head>
-<p id="arrow"><a href="./grr.html"><</a></p>
+
 <body>
+
+<p id="arrow">
+    <a href="./grr.html">&lt;</a>
+</p>
+
 <div class="container">
+
     <h1>Expectation-Maximization Algorithm</h1>
 
     <p>
-        The Expectation-Maximization Algorithm (EM) aims to help us estimate
-        the m/u probabilities for all fields being used for matching. It does this
-        with an initial guessing step, then a re-estimation step that repeats
-        indefinitely until the numbers stabilize.
+        The Expectation-Maximization Algorithm (EM) estimates the m/u probabilities
+        for each field used in record linkage. It alternates between estimating
+        the probability each pair is a match (E-step) and recomputing parameters (M-step)
+        until convergence.
     </p>
 
     <br>
 
-    <h2>
-        Step 1 - Start with an initial guess
-    </h2>
+    <h2>Step 1 - Initialize</h2>
 
     <p>
-       The algorithm is given ballparked starting values for each field. This might look
-        something like this:
+        Provide initial guesses for each field:
     </p>
+
     <ul>
-        <li><strong>Name:</strong> m = 0.90, u = 0.001</li>
+        <li><strong>Name:</strong> m = 0.90, u = 0.01</li>
         <li><strong>ZIP:</strong> m = 0.55, u = 0.005</li>
         <li><strong>Gender:</strong> m = 0.99, u = 0.5</li>
     </ul>
+
     <p>
-        In reference to the term "ballpark", these numbers do not need to be perfect.
-        Technically, you could make these numbers anything you want, but it will take
-        substantially longer to compute. Generally, human intuition is good enough for
-        a starting point here.
+        These values do not need to be perfect. EM will refine them.
     </p>
 
     <br>
 
-    <h2>Step 2 - Expectation</h2>
+    <h2>Step 2 - Expectation (E-step)</h2>
+
     <p>
-        Using the current values, we score every pair and estimate: <u>what is the
-    probability this pair is <i>truly</i> a match?</u> After this step, every pair
-        will get a soft label rather than a hard yes/no:
+        For each pair, compute the likelihood of observing its agreement pattern
+        under both match (M) and non-match (U) assumptions.
     </p>
+
+    <table>
+        <tr>
+            <th>field</th>
+            <th>agreement</th>
+            <th>m_prob</th>
+            <th>u_prob</th>
+        </tr>
+        <tr>
+            <td>NAME</td>
+            <td>1</td>
+            <td>0.90</td>
+            <td>0.01</td>
+        </tr>
+        <tr>
+            <td>ZIP</td>
+            <td>0</td>
+            <td>0.55</td>
+            <td>0.005</td>
+        </tr>
+        <tr>
+            <td>GENDER</td>
+            <td>0</td>
+            <td>0.99</td>
+            <td>0.5</td>
+        </tr>
+    </table>
+
+    <p>
+        We assume fields are conditionally independent. The likelihoods are:
+    </p>
+
     <ul>
-        <li>Pair A might be 0.99</li>
-        <li>Pair B might be 0.17</li>
-        <li>Pair C might be 0.002</li>
+        <li>
+            <code>
+                P(y | M) = product over fields:
+                use m_prob if agreement = 1,
+                otherwise use (1 - m_prob)
+            </code>
+        </li>
+        <li>
+            <code>
+                P(y | U) = product over fields:
+                use u_prob if agreement = 1,
+                otherwise use (1 - u_prob)
+            </code>
+        </li>
     </ul>
+
+    <p>Example calculation:</p>
+
+    <ul>
+        <li>
+            <code>
+                P(y|M) = 0.9 * (1 - 0.55) * (1 - 0.99)
+                = 0.9 * 0.45 * 0.01
+                = 0.00405
+            </code>
+        </li>
+        <li>
+            <code>
+                P(y|U) = 0.01 * (1 - 0.005) * (1 - 0.5)
+                = 0.01 * 0.995 * 0.5
+                = 0.004975
+            </code>
+        </li>
+    </ul>
+
     <p>
-        This step is called Expectation because all we are doing is computing the <i>
-        expected</i> match status of each pair under our current model.
+        Now compute the posterior probability that the pair is a match:
+    </p>
+
+    <ul>
+        <li>
+            <code>
+                w = (prior * P(y|M)) /
+                (prior * P(y|M) + (1 - prior) * P(y|U))
+            </code>
+        </li>
+        <li>
+            <code>
+                w = (0.1 * 0.00405) /
+                (0.1 * 0.00405 + 0.9 * 0.004975)
+            </code>
+        </li>
+        <li><code>w ≈ 0.0829</code></li>
+    </ul>
+
+    <p>
+        This means there is about an <strong>8.29% chance</strong> that this pair is a true match.
     </p>
 
     <br>
 
-    <h2>Step 3 - Maximization</h2>
+    <h2>Step 3 - Maximization (M-step)</h2>
 
     <p>
-        Now, we treat the estimated match probabilities we just calculated as weights
-        and recompute the m/u values. For example, if name agreement appears mostly
-        in pairs that have high probability of being true matches, the estimated M value
-        for name stays high. Or, if ZIP agreement appears frequently even among pairs
-        with low match probability, the estimated U value for ZIP will rise. Continually
-        applying this step will better fit our actual data.
+        Now we recompute the m and u probabilities using all pairs.
+        Each pair contributes:
     </p>
+
+    <ul>
+        <li><code>w</code> toward matches</li>
+        <li><code>1 - w</code> toward non-matches</li>
+    </ul>
+
+    <p>
+        Updated formulas for each field:
+    </p>
+
+    <ul>
+        <li>
+            <code>
+                m_j = (sum over pairs of w_i * indicator(agreement_ij = 1))
+                / (sum over pairs of w_i)
+            </code>
+        </li>
+        <li>
+            <code>
+                u_j = (sum over pairs of (1 - w_i) * indicator(agreement_ij = 1))
+                / (sum over pairs of (1 - w_i))
+            </code>
+        </li>
+    </ul>
+
+    <p>
+        Important notes:
+    </p>
+
+    <ul>
+        <li>The probabilities get re-computed every run, they are not being incrementally updated</li>
+        <li>All pairs contribute to the sums</li>
+        <li>Agreement = 0 still affects the denominator indirectly</li>
+    </ul>
+
+    <p>
+        Intuition:
+    </p>
+
+    <ul>
+        <li>If a field agrees mostly in high-probability matches → m increases</li>
+        <li>If a field agrees often in low-probability matches → u increases</li>
+    </ul>
 
     <br>
 
     <h2>Step 4 - Repeat</h2>
+
     <p>
-        Our EM algorithm will repeat steps 2 and 3 until we start approaching
-        convergence, where the numbers are only changing by 0.01 or less every
-        re-run. Once we reach that point, we have successfully estimated
-        our m/u probability for every field used in our GRR.
+        Repeat the E-step and M-step until convergence, when the parameters
+        stop changing significantly.
     </p>
+
+    <p>
+        At that point, the model has learned the m/u probabilities that best
+        explain the data.
+    </p>
+
 </div>
+
 <footer>
-    <br />
+    <br>
 </footer>
+
 </body>
 </html>
