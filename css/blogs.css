@@ -131,3 +131,101 @@ footer > p {
 .code-title{
     text-align: center;
 }
+
+code {
+    text-align: left;
+}
+
+h2, h3, h4, h5, h6 {
+    text-align: left;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    background-color: #ffffff;
+}
+
+thead {
+    background-color: lightblue;
+}
+
+thead th {
+    text-align: left;
+    padding: 16px 16px;
+    font-weight: 600;
+    color: black;
+    border-bottom: 2px solid #e1e4e8;
+    background-color: blue;
+}
+
+tbody td {
+    padding: 16px 16px;
+    border-bottom: 1px solid #e1e4e8;
+    color: #000000;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #fafafa;
+}
+
+tbody tr:hover {
+    background-color: #f1f5f9;
+}
+
+th {
+    background-color: lightblue;
+    padding: 8px 8px;
+}
+
+th, td {
+    border: none;
+}
+
+.left {
+    text-align: left;
+}
+
+.highlight {
+    background-color: yellow;
+}
+
+code {
+    font-family: Consolas, Monaco, "Courier New", monospace;
+    font-size: 0.95em;
+    background-color: #f4f6f8;
+    color: maroon; /* subtle accent color */
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid #e1e4e8;
+}
+
+pre {
+    background-color: #1e1e1e;   /* dark editor background */
+    color: #dcdcdc;              /* default text color */
+    text-align: left;
+    padding: 16px 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-family: Consolas, Monaco, "Courier New", monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    border: 1px solid #2d2d2d;
+}
+
+.keyword { color: #569cd6; }   /* def, return */
+.func    { color: #dcdcaa; }   /* function name */
+.string  { color: #ce9178; }   /* strings */
+.comment { color: #6a9955; font-style: italic; }
+.var     { color: #9cdcfe; }   /* variables */
+
+
+.red {
+    background-color: #D00000;
+}
+
+.green {
+    background-color: #00D000;
+}
